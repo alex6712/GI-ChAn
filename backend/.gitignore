@@ -1,0 +1,19 @@
+# !- BACKEND -! #
+
+# Python virtual environment #
+venv/
+
+# PyCharm project info #
+.idea/
+
+# Python chache #
+__pycache__/
+*.py[cod]
+*$py.class
+
+# API test scripts #
+test/
+*.http
+
+# .env #
+.env
