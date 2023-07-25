@@ -12,3 +12,5 @@ entities in the database (see database.models).
 .. _`here`:
      https://www.sqlalchemy.org
 """
+
+from .initialize import initialize

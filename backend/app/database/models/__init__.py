@@ -6,5 +6,4 @@ It describes the models of the database used and the interfaces for interacting 
 """
 
 from .base import BaseModel
-from .base import JoinBaseModel
 from .user import UserModel

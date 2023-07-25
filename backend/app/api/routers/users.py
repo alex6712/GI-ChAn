@@ -37,7 +37,7 @@ async def me(user: Annotated[UserSchema, Depends(validate_access_token)]):
     Returns
     -------
     user : UserSchema
-        User schema without password.
+        User schema without a password.
     """
     return user
 
