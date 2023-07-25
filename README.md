@@ -14,3 +14,7 @@ and a smart analyzer will help you create an ultra-bending ones.
 
 Create a platform where users can save builds of their
 characters and with the help of a smart system to improve them.
+
+## License
+
+[MIT License](https://github.com/alex6712/gi-characters-analyzer/blob/master/LICENSE.md)
