@@ -1,3 +1,4 @@
+import re
 from typing import (
     Annotated,
     Dict,
@@ -105,26 +106,26 @@ async def sign_up(
     response : StandardResponse
         Positive feedback about user registration.
     """
-    if await user_service.get_user_by_username(session, user.username):
-        await session.rollback()
-
-        raise HTTPException(
-            status_code=status.HTTP_409_CONFLICT,
-            detail="User already exists.",
-        )
-
     user.password = hash_(user.password)
 
     user_service.add_user(session, user)
 
     try:
         await session.commit()
-    except IntegrityError:
+    except IntegrityError as e:
         await session.rollback()
+
+        if (result := re.search(r"\"\((.*)\)=\((.*)\)\"", str(e.orig))) is not None:
+            column, value = result.groups()
+
+            raise HTTPException(
+                status_code=status.HTTP_409_CONFLICT,
+                detail=f"User with {column}=\"{value}\" already exists!",
+            )
 
         raise HTTPException(
             status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Not enough information in request.",
+            detail="Not enough data in request.",
         )
 
     return {"code": status.HTTP_201_CREATED, "message": f"User created successfully."}

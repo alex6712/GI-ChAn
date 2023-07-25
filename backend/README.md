@@ -2,7 +2,7 @@
 
 ## Description
 
-The server part of the application, which is responsible for the game logic and work with the database.
+The server part of the application, which is responsible for the game logic and works with the database.
 
 ## Install dependencies
 
