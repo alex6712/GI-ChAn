@@ -34,5 +34,5 @@ class WeaponModel(BaseModel):
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(" \
                f"id={self.id!r}, " \
-               f"username={self.title!r}, " \
+               f"title={self.title!r}, " \
                f")>"
