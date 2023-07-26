@@ -48,3 +48,14 @@ class UserCharacter(tables.Base):
 
     user: Mapped["tables.User"] = relationship("User", back_populates="characters")
     character: Mapped["tables.Character"] = relationship("Character", back_populates="users")
+
+    def __repr__(self) -> str:
+        return f"<{self.__class__.__name__}" \
+               f"user_id={self.user_id!r}, " \
+               f"character_id={self.character_id!r}, " \
+               f"character_level={self.character_level!r}, " \
+               f"character_constellations={self.character_constellations!r}, " \
+               f"character_attack_level={self.character_attack_level!r}" \
+               f"character_skill_level={self.character_skill_level!r}" \
+               f"character_burst_level={self.character_burst_level!r}" \
+               f")>"

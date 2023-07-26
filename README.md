@@ -1,3 +1,5 @@
+![Preview](https://repository-images.githubusercontent.com/670568622/fee782b9-06e3-41a5-b925-5e3c519ec51e)
+
 # Genhin Impact Characters Analyzer
 
 _Characters analyzer and automatic builds generator for Genshin Impact._
