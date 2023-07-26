@@ -46,5 +46,5 @@ class UserCharacter(tables.Base):
     character_skill_level: Mapped[int] = mapped_column(Integer())
     character_burst_level: Mapped[int] = mapped_column(Integer())
 
-    user: Mapped["tables.User"] = relationship(back_populates="characters")
-    character: Mapped["tables.Character"] = relationship(back_populates="users")
+    user: Mapped["tables.User"] = relationship("User", back_populates="characters")
+    character: Mapped["tables.Character"] = relationship("Character", back_populates="users")

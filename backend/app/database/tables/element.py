@@ -29,7 +29,7 @@ class Element(tables.Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid(), server_default=func.gen_random_uuid())
     title: Mapped[str] = mapped_column(String(256))
 
-    characters: Mapped[List["tables.Character"]] = relationship(back_populates="element")
+    characters: Mapped[List["tables.Character"]] = relationship("Character", back_populates="element")
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(" \

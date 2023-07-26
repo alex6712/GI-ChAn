@@ -30,18 +30,14 @@ class User(tables.Base):
         },
     )
 
-    id: Mapped[uuid.UUID] = mapped_column(
-        Uuid(),
-        server_default=func.gen_random_uuid(),
-        comment="User's UUID.",
-    )
+    id: Mapped[uuid.UUID] = mapped_column(Uuid(), server_default=func.gen_random_uuid())
     username: Mapped[str] = mapped_column(String(256))
     password: Mapped[str] = mapped_column(String(256))
     email: Mapped[str] = mapped_column(String(256), nullable=True)
     phone: Mapped[str] = mapped_column(String(256), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(256), nullable=True, comment="Refresh token for access token.")
 
-    characters: Mapped[List["tables.UserCharacter"]] = relationship(back_populates="user")
+    characters: Mapped[List["tables.UserCharacter"]] = relationship("UserCharacter", back_populates="user")
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(" \

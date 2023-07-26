@@ -59,10 +59,10 @@ class Character(tables.Base):
     element_id: Mapped[uuid.UUID] = mapped_column(Uuid())
     region_id: Mapped[uuid.UUID] = mapped_column(Uuid())
 
-    weapon: Mapped["tables.Weapon"] = relationship(back_populates="characters")
-    element: Mapped["tables.Element"] = relationship(back_populates="characters")
-    region: Mapped["tables.Region"] = relationship(back_populates="characters")
-    users: Mapped[List["tables.UserCharacter"]] = relationship(back_populates="character")
+    weapon: Mapped["tables.Weapon"] = relationship("Weapon", back_populates="characters")
+    element: Mapped["tables.Element"] = relationship("Element", back_populates="characters")
+    region: Mapped["tables.Region"] = relationship("Region", back_populates="characters")
+    users: Mapped[List["tables.UserCharacter"]] = relationship("UserCharacter", back_populates="character")
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(" \

@@ -32,7 +32,7 @@ Also, a less preferred launch version (because the settings are read from the CL
 
 ```pycon
 cd backend
-python -m uvicorn app.main:cybersquad_games --reload --host <host> --port 8080
+python -m uvicorn app.main:characters_analyzer --reload --host <host> --port 8080
 ```
 
 ***

@@ -14,5 +14,6 @@ because for convenience [1]_ each router is called ``router`` in separate module
 """
 
 from .auth import router as auth_router
+from .characters import router as characters_router
 from .root import router as root_router
 from .users import router as users_router

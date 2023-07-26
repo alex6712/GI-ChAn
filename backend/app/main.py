@@ -4,6 +4,7 @@ from fastapi.middleware.cors import CORSMiddleware
 from app import get_settings
 from app.api.routers import (
     auth_router,
+    characters_router,
     root_router,
     users_router,
 )
@@ -23,9 +24,13 @@ tags_metadata = [
         "name": "users",
         "description": "Operations with **users**. Getting _information_ about them.",
     },
+    {
+        "name": "characters",
+        "description": "Operations with **characters**. _Adding_, _deleting_, _updating_.",
+    },
 ]
 
-cybersquad_games = FastAPI(
+characters_analyzer = FastAPI(
     title=settings.APP_NAME,
     version=settings.APP_VERSION,
     description=settings.APP_DESCRIPTION,
@@ -37,7 +42,7 @@ cybersquad_games = FastAPI(
     openapi_tags=tags_metadata,
 )
 
-cybersquad_games.add_middleware(
+characters_analyzer.add_middleware(
     CORSMiddleware,
     allow_origins=settings.BACKEND_CORS_ORIGINS,
     allow_credentials=True,
@@ -45,6 +50,7 @@ cybersquad_games.add_middleware(
     allow_headers=["*"],
 )
 
-cybersquad_games.include_router(auth_router)
-cybersquad_games.include_router(root_router)
-cybersquad_games.include_router(users_router)
+characters_analyzer.include_router(auth_router)
+characters_analyzer.include_router(characters_router)
+characters_analyzer.include_router(root_router)
+characters_analyzer.include_router(users_router)
