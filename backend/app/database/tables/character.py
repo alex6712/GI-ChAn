@@ -53,7 +53,7 @@ class Character(tables.Base):
     name: Mapped[str] = mapped_column(String(256))
     legendary: Mapped[bool] = mapped_column(
         Boolean(),
-        comment="If character is five star, this flag is True, False otherwise.",
+        comment="If character is five stars, this flag is True, False otherwise.",
     )
     weapon_id: Mapped[uuid.UUID] = mapped_column(Uuid())
     element_id: Mapped[uuid.UUID] = mapped_column(Uuid())
