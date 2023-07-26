@@ -6,12 +6,11 @@ FROM python:3.11
 # set work directory
 WORKDIR /backend-image
 
-# install dependencies
-COPY ./requirements.txt /backend-image
-RUN pip install --no-cache-dir --upgrade -r /backend-image/requirements.txt
-
 # copy source root
-COPY ./ /backend-image
+COPY . /backend-image
+
+# install dependencies
+RUN pip install --no-cache-dir --upgrade -r requirements.txt
 
 # starting
 CMD ["python", "start.py"]
