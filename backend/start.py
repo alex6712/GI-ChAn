@@ -1,9 +1,9 @@
-import uvicorn
 import asyncio
+
+import uvicorn
 
 from app import get_settings
 from app.database import initialize
-
 
 if __name__ == "__main__":
     settings = get_settings()
