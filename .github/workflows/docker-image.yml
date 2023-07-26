@@ -15,4 +15,4 @@ jobs:
     steps:
     - uses: actions/checkout@v3
     - name: Build the Docker image for backend
-      run: docker build . --file Dockerfile --tag backend-image:$(date +%s)
+      run: docker build . --file backend/Dockerfile --tag backend-image:$(date +%s)
