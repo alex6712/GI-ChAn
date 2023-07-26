@@ -7,8 +7,8 @@ FROM python:3.11
 WORKDIR /backend
 
 # install dependencies
-COPY requirements.txt .
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+COPY ./requirements.txt .
+RUN pip install --no-cache-dir --upgrade -r ./requirements.txt
 
 # copy source root
 COPY . .
