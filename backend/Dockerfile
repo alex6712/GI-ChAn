@@ -1,10 +1,9 @@
 FROM python:3.11
 
-WORKDIR /code
+WORKDIR /backend-image
 
-COPY requirements.txt /code/requirements.txt
-RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
+COPY . .
 
-COPY ./app /code
+RUN pip install --no-cache-dir --upgrade -r /backend-image/requirements.txt
 
 CMD ["python", "start.py"]
