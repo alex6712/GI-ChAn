@@ -1,4 +1,22 @@
-![Preview](https://repository-images.githubusercontent.com/670568622/fee782b9-06e3-41a5-b925-5e3c519ec51e)
+<div align="center">
+  <p>
+    <h1>
+      <b>GI-ChAn</b>
+    </h1>
+  </p>
+  <p>
+    <b>Characters analyzer and automatic builds generator for Genshin Impact.</b>
+  </p>
+  <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/alex6712/GI-ChAn?logo=GitHub">
+  <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/alex6712/GI-ChAn?logo=GitHub">
+  <p>
+    
+![Preview](https://repository-images.githubusercontent.com/670568622/42fc5d0c-d0a4-4623-ae08-27bd3534410d)
+
+  </p>
+</div>
+
+***
 
 # Genhin Impact Characters Analyzer
 
