@@ -12,7 +12,7 @@ if __name__ == "__main__":
         asyncio.run(initialize())
 
     uvicorn.run(
-        app="app.main:cybersquad_games",
+        app="app.main:characters_analyzer",
         host=settings.DOMAIN,
         port=settings.BACKEND_PORT,
         reload=settings.DEV_MODE,

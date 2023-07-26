@@ -21,7 +21,7 @@ router = APIRouter(
 
 
 @router.get(
-    "/",
+    "",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
     summary="Returns user's characters."
@@ -44,4 +44,4 @@ async def get_characters(
     response : StandardResponse
         In development.
     """
-    return {"massage": "In development."}
+    return {"message": "In development."}

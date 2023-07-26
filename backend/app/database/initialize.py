@@ -1,9 +1,9 @@
 from asyncpg.exceptions import ConnectionDoesNotExistError
+from sqlalchemy.exc import ProgrammingError
 from sqlalchemy.ext.asyncio import (
     AsyncEngine,
     create_async_engine,
 )
-from sqlalchemy.exc import ProgrammingError
 
 from app import get_settings
 from app.config import Settings
