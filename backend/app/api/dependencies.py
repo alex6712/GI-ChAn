@@ -18,7 +18,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.jwt import jwt_decode
 from app.api.schemas import UserSchema
 from app.api.services import user_service
-from app.database.models import UserModel
+from app.database.tables import User
 from app.database.session import get_session
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/sign_in")
@@ -87,7 +87,7 @@ async def validate_refresh_token(
     return UserSchema(username=user.username, email=user.email, phone=user.phone)
 
 
-async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> UserModel:
+async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> User:
     """Function to get user record from a database by data from JWT.
 
     Receives a JSON Web Token as input, decodes it, and checks if the user exists in the database.
@@ -102,7 +102,7 @@ async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> UserMode
 
     Returns
     -------
-    user : UserModel
+    user : User
         Model of the user record from the database.
     """
     global credentials_exception

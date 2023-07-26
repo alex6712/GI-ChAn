@@ -115,7 +115,7 @@ async def sign_up(
     except IntegrityError as e:
         await session.rollback()
 
-        if (result := re.search(r"\"\((.*)\)=\((.*)\)\"", str(e.orig))) is not None:
+        if (result := re.search(r'"\((.*)\)=\((.*)\)"', str(e.orig))) is not None:
             column, value = result.groups()
 
             raise HTTPException(
