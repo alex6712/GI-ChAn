@@ -10,7 +10,7 @@ WORKDIR /backend-image
 COPY . /backend-image
 
 # install dependencies
-RUN pip install --no-cache-dir --upgrade -r requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /backend-image/requirements.txt
 
 # starting
 CMD ["python", "start.py"]
