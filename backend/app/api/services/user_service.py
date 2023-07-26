@@ -4,10 +4,10 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas import UserWithPasswordSchema
-from app.database.models import UserModel
+from app.database.tables import User
 
 
-async def get_user_by_username(session: AsyncSession, username: AnyStr) -> UserModel:
+async def get_user_by_username(session: AsyncSession, username: AnyStr) -> User:
     """Returns the user post model for further work.
 
     Parameters
@@ -19,10 +19,10 @@ async def get_user_by_username(session: AsyncSession, username: AnyStr) -> UserM
 
     Returns
     -------
-    user : UserModel
+    user : User
         The model of the user record in the database.
     """
-    return await session.scalar(select(UserModel).where(UserModel.username == username))
+    return await session.scalar(select(User).where(User.username == username))
 
 
 async def update_refresh_token(session: AsyncSession, username: AnyStr, refresh_token: AnyStr):
@@ -56,4 +56,4 @@ def add_user(session: AsyncSession, user: UserWithPasswordSchema):
     user : UserWithPasswordSchema
         Schema of a user object with a password.
     """
-    session.add(UserModel(username=user.username, password=user.password, email=user.email, phone=user.phone))
+    session.add(User(username=user.username, password=user.password, email=user.email, phone=user.phone))

@@ -1,4 +1,5 @@
 import uuid
+from typing import List
 
 from sqlalchemy import (
     String,
@@ -9,13 +10,14 @@ from sqlalchemy import (
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
+    relationship,
 )
 from sqlalchemy.types import Uuid
 
-from .base import BaseModel
+from app.database import tables
 
 
-class UserModel(BaseModel):
+class User(tables.Base):
     __tablename__ = "user"
 
     __table_args__ = (
@@ -33,11 +35,13 @@ class UserModel(BaseModel):
         server_default=func.gen_random_uuid(),
         comment="User's UUID.",
     )
-    username: Mapped[str] = mapped_column(String(256), comment="User's login, unique name.")
-    password: Mapped[str] = mapped_column(String(256), comment="User's password, hashed.")
-    email: Mapped[str] = mapped_column(String(256), nullable=True, comment="User's email, unique entity.")
-    phone: Mapped[str] = mapped_column(String(256), nullable=True, comment="User's phone, unique entity.")
+    username: Mapped[str] = mapped_column(String(256))
+    password: Mapped[str] = mapped_column(String(256))
+    email: Mapped[str] = mapped_column(String(256), nullable=True)
+    phone: Mapped[str] = mapped_column(String(256), nullable=True)
     refresh_token: Mapped[str] = mapped_column(String(256), nullable=True, comment="Refresh token for access token.")
+
+    characters: Mapped[List["tables.UserCharacter"]] = relationship(back_populates="user")
 
     def __repr__(self) -> str:
         return f"<{self.__class__.__name__}(" \

@@ -1,4 +1,5 @@
 from pydantic import BaseModel, Field, EmailStr
+from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
 class UserSchema(BaseModel):
@@ -12,12 +13,12 @@ class UserSchema(BaseModel):
         User login.
     email : EmailStr
         The user's email address.
-    phone : str
+    phone : PhoneNumber
         The user's mobile phone number.
     """
     username: str = Field(example="someone")
     email: EmailStr = Field(default=None, example="someone@post.domen")
-    phone: str = Field(default=None, example="+7 900 000-00-00")
+    phone: PhoneNumber = Field(default=None, example="+7 900 000-00-00")
 
 
 class UserWithPasswordSchema(UserSchema):
