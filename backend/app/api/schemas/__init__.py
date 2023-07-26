@@ -17,3 +17,8 @@ from .user import (
     UserSchema,
     UserWithPasswordSchema,
 )
+from .character import (
+    CharacterSchema,
+    UserCharacterSchema,
+    FullCharacterSchema,
+)

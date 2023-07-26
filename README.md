@@ -11,7 +11,7 @@
   <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/alex6712/GI-ChAn?logo=GitHub">
   <p>
     
-![Preview](https://repository-images.githubusercontent.com/670568622/42fc5d0c-d0a4-4623-ae08-27bd3534410d)
+![Preview](https://repository-images.githubusercontent.com/670568622/a8db9ebe-8821-4705-8896-3b748666b888)
 
   </p>
 </div>
