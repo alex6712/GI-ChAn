@@ -1,16 +1,9 @@
 from typing import Annotated
 
-from fastapi import (
-    APIRouter,
-    status,
-    Depends,
-)
+from fastapi import APIRouter, Depends, status
 
 from app import get_settings
-from app.api.schemas.responses import (
-    StandardResponse,
-    AppInfoResponse,
-)
+from app.api.schemas.responses import AppInfoResponse, StandardResponse
 from app.config import Settings
 
 router = APIRouter(
@@ -18,7 +11,12 @@ router = APIRouter(
 )
 
 
-@router.get("/", response_model=StandardResponse, status_code=status.HTTP_200_OK, summary="Functionality check.")
+@router.get(
+    "/",
+    response_model=StandardResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Functionality check.",
+)
 async def root():
     """Root path for API health check.
 

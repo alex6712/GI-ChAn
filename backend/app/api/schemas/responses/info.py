@@ -27,6 +27,7 @@ class AppInfoResponse(StandardResponse):
     admin_email : str
         Email address to contact the person in charge.
     """
+
     app_name: str = Field(example="Fast API")
     app_version: str = Field(example="0.0.0")
     app_description: str = Field(example="REST API using FastAPI Python 3.11")

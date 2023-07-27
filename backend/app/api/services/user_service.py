@@ -25,7 +25,9 @@ async def get_user_by_username(session: AsyncSession, username: AnyStr) -> User:
     return await session.scalar(select(User).where(User.username == username))
 
 
-async def update_refresh_token(session: AsyncSession, username: AnyStr, refresh_token: AnyStr):
+async def update_refresh_token(
+    session: AsyncSession, username: AnyStr, refresh_token: AnyStr
+):
     """Overwrites the user's refresh token.
 
     Note
@@ -56,4 +58,11 @@ def add_user(session: AsyncSession, user: UserWithPasswordSchema):
     user : UserWithPasswordSchema
         Schema of a user object with a password.
     """
-    session.add(User(username=user.username, password=user.password, email=user.email, phone=user.phone))
+    session.add(
+        User(
+            username=user.username,
+            password=user.password,
+            email=user.email,
+            phone=user.phone,
+        )
+    )

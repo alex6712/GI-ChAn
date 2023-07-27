@@ -1,25 +1,20 @@
 from typing import Annotated, AnyStr
 
-from fastapi import (
-    Depends,
-    status,
-    HTTPException,
-    Security,
-)
+from fastapi import Depends, HTTPException, Security, status
 from fastapi.security import (
-    OAuth2PasswordBearer,
     HTTPAuthorizationCredentials,
     HTTPBearer,
+    OAuth2PasswordBearer,
 )
-from jose import JWTError, ExpiredSignatureError
+from jose import ExpiredSignatureError, JWTError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.jwt import jwt_decode
 from app.api.schemas import UserSchema
 from app.api.services import user_service
-from app.database.tables import User
 from app.database.session import get_session
+from app.database.tables import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/sign_in")
 
@@ -31,8 +26,8 @@ credentials_exception = HTTPException(
 
 
 async def validate_access_token(
-        token: Annotated[AnyStr, Depends(oauth2_scheme)],
-        session: Annotated[AsyncSession, Depends(get_session)],
+    token: Annotated[AnyStr, Depends(oauth2_scheme)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UserSchema:
     """Dependency authorization.
 
@@ -57,8 +52,8 @@ async def validate_access_token(
 
 
 async def validate_refresh_token(
-        credentials: Annotated[HTTPAuthorizationCredentials, Security(HTTPBearer())],
-        session: Annotated[AsyncSession, Depends(get_session)],
+    credentials: Annotated[HTTPAuthorizationCredentials, Security(HTTPBearer())],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ) -> UserSchema:
     """Dependency of automatic authentication.
 
@@ -77,8 +72,6 @@ async def validate_refresh_token(
     user : UserSchema
         User data schema.
     """
-    global credentials_exception
-
     user = await _get_user_from_token(refresh_token := credentials.credentials, session)
 
     if user.refresh_token != refresh_token:
@@ -105,8 +98,6 @@ async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> User:
     user : User
         Model of the user record from the database.
     """
-    global credentials_exception
-
     try:
         if (username := jwt_decode(token).get("sub")) is None:
             raise credentials_exception

@@ -21,5 +21,6 @@ class StandardResponse(BaseModel):
     message : str
         Message from the server.
     """
+
     code: int = Field(default=status.HTTP_200_OK, example=status.HTTP_200_OK)
     message: str = Field(default="Success!", example="Success!")

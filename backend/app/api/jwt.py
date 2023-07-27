@@ -21,7 +21,9 @@ def jwt_encode(to_encode: Dict) -> AnyStr:
     token : AnyStr
         JSON Web Token.
     """
-    return jwt.encode(to_encode, key=settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM)
+    return jwt.encode(
+        to_encode, key=settings.JWT_SECRET_KEY, algorithm=settings.JWT_ALGORITHM
+    )
 
 
 def jwt_decode(token: AnyStr) -> Dict:
@@ -37,7 +39,9 @@ def jwt_decode(token: AnyStr) -> Dict:
     dictionary : Dict
         Dictionary with information from JWT.
     """
-    return jwt.decode(token, key=settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM])
+    return jwt.decode(
+        token, key=settings.JWT_SECRET_KEY, algorithms=[settings.JWT_ALGORITHM]
+    )
 
 
 def create_jwt(data: Dict, expires_delta: timedelta) -> AnyStr:
@@ -64,10 +68,12 @@ def create_jwt(data: Dict, expires_delta: timedelta) -> AnyStr:
 
 
 def create_jwt_pair(
-        access_token_data: Dict,
-        refresh_token_data: Dict = None,
-        at_expires_delta: timedelta = timedelta(minutes=settings.ACCESS_TOKEN_LIFETIME_MINUTES),
-        rt_expires_delta: timedelta = timedelta(days=settings.REFRESH_TOKEN_LIFETIME_DAYS),
+    access_token_data: Dict,
+    refresh_token_data: Dict = None,
+    at_expires_delta: timedelta = timedelta(
+        minutes=settings.ACCESS_TOKEN_LIFETIME_MINUTES
+    ),
+    rt_expires_delta: timedelta = timedelta(days=settings.REFRESH_TOKEN_LIFETIME_DAYS),
 ) -> Dict[AnyStr, AnyStr]:
     """Creates a JWT pair consisting of an access token and a refresh token.
 
@@ -92,5 +98,5 @@ def create_jwt_pair(
 
     return {
         "access_token": create_jwt(access_token_data, at_expires_delta),
-        "refresh_token": create_jwt(refresh_token_data, rt_expires_delta)
+        "refresh_token": create_jwt(refresh_token_data, rt_expires_delta),
     }

@@ -1,5 +1,5 @@
-from uuid import UUID
 from typing import AnyStr, List
+from uuid import UUID
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -8,17 +8,12 @@ from app.api.schemas import (
     CharacterSchema,
     FullCharacterSchema,
 )
-from app.database.tables import (
-    User,
-    UserCharacter,
-    Character,
-    Weapon,
-    Element,
-    Region,
-)
+from app.database.tables import Character, Element, Region, User, UserCharacter, Weapon
 
 
-async def get_full_characters_by_username(session: AsyncSession, username: AnyStr) -> List[FullCharacterSchema]:
+async def get_full_characters_by_username(
+    session: AsyncSession, username: AnyStr
+) -> List[FullCharacterSchema]:
     """The function of obtaining a complete description of all user's characters.
 
     It accepts the user's login as input, forms a query to the user_character
@@ -39,18 +34,21 @@ async def get_full_characters_by_username(session: AsyncSession, username: AnySt
     characters : List[FullCharacterSchema]
         List of complete user's characters' representations.
     """
-    user_id: UUID = await session.scalar(select(User.id).where(User.username == username))
+    user_id: UUID = await session.scalar(
+        select(User.id).where(User.username == username)
+    )
 
     user_characters_info: List[UserCharacter] = [
         *await session.scalars(
-            select(UserCharacter)
-            .where(UserCharacter.user_id == user_id)
+            select(UserCharacter).where(UserCharacter.user_id == user_id)
         )
     ]
 
     result = []
     for user_character_info in user_characters_info:
-        character_info: CharacterSchema = await get_character_by_id(session, user_character_info.character_id)
+        character_info: CharacterSchema = await get_character_by_id(
+            session, user_character_info.character_id
+        )
 
         result.append(
             FullCharacterSchema(
@@ -89,11 +87,19 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> CharacterSche
     character : CharacterSchema
         General information about character.
     """
-    character_info: Character = await session.scalar(select(Character).where(Character.id == id_))
+    character_info: Character = await session.scalar(
+        select(Character).where(Character.id == id_)
+    )
 
-    weapon: str = await session.scalar(select(Weapon.title).where(Weapon.id == character_info.weapon_id))
-    element: str = await session.scalar(select(Element.title).where(Element.id == character_info.element_id))
-    region: str = await session.scalar(select(Region.title).where(Region.id == character_info.region_id))
+    weapon: str = await session.scalar(
+        select(Weapon.title).where(Weapon.id == character_info.weapon_id)
+    )
+    element: str = await session.scalar(
+        select(Element.title).where(Element.id == character_info.element_id)
+    )
+    region: str = await session.scalar(
+        select(Region.title).where(Region.id == character_info.region_id)
+    )
 
     return CharacterSchema(
         name=character_info.name,
