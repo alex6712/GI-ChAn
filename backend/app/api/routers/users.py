@@ -77,7 +77,7 @@ async def get_person(
         User schema without a password.
     """
     if user.username == username:
-        return RedirectResponse("/users/me")
+        return RedirectResponse("/api/v1/users/me")
 
     if (result := await user_service.get_user_by_username(session, username)) is None:
         raise HTTPException(
@@ -95,4 +95,4 @@ async def get_person(
             detail="Not enough information in request.",
         )
 
-    return result
+    return UserSchema.model_validate(result)
