@@ -108,7 +108,7 @@ async def put_character(
     status_code=status.HTTP_200_OK,
     summary="Deleting character.",
 )
-async def put_character(
+async def delete_character(
     character_id: Annotated[
         UUID, Path(description="The UUID of the character to delete.")
     ],
