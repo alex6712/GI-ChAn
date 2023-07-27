@@ -3,14 +3,13 @@ from typing import Annotated, AnyStr
 from fastapi import APIRouter, Depends, Path, status
 from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
-from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_access_token
-from app.api.schemas import UserSchema
 from app.api.schemas.responses import UserResponse
 from app.api.services import user_service
 from app.database.session import get_session
+from app.database.tables import User
 
 router = APIRouter(
     prefix="/users",
@@ -24,20 +23,20 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
     summary="Personal page.",
 )
-async def get_me(user: Annotated[UserSchema, Depends(validate_access_token)]):
+async def get_me(user: Annotated[User, Depends(validate_access_token)]):
     """User's personal page method.
 
     Returns information about the owner of the token.
 
     Parameters
     ----------
-    user : UserSchema
+    user : User
         The user is received from dependence on authorization.
 
     Returns
     -------
-    user : UserSchema
-        User schema without a password.
+    user : UserResponse
+        Response with user's info.
     """
     return user
 
@@ -53,7 +52,7 @@ async def get_person(
         AnyStr,
         Path(description="Login of the user whose personal page you want to go to."),
     ],
-    user: Annotated[UserSchema, Depends(validate_access_token)],
+    user: Annotated[User, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """User's page method.
@@ -66,15 +65,15 @@ async def get_person(
     ----------
     username : AnyStr
         The name of the user whose page is being requested.
-    user : UserSchema
+    user : User
         The user is received from dependence on authorization.
     session : AsyncSession
         Request session object.
 
     Returns
     -------
-    user : UserSchema
-        User schema without a password.
+    user : UserResponse
+        Response with user's info.
     """
     if user.username == username:
         return RedirectResponse("/api/v1/users/me")
@@ -85,14 +84,4 @@ async def get_person(
             detail=f'User "{username}" not found.',
         )
 
-    try:
-        await session.commit()
-    except IntegrityError:
-        await session.rollback()
-
-        raise HTTPException(
-            status_code=status.HTTP_400_BAD_REQUEST,
-            detail="Not enough information in request.",
-        )
-
-    return UserSchema.model_validate(result)
+    return result

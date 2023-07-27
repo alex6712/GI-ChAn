@@ -11,7 +11,6 @@ from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.jwt import jwt_decode
-from app.api.schemas import UserSchema
 from app.api.services import user_service
 from app.database.session import get_session
 from app.database.tables import User
@@ -28,7 +27,7 @@ credentials_exception = HTTPException(
 async def validate_access_token(
     token: Annotated[AnyStr, Depends(oauth2_scheme)],
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> UserSchema:
+) -> User:
     """Dependency authorization.
 
     Receives a JSON Web Token as input, decodes it, and checks if the user exists in the database.
@@ -43,18 +42,16 @@ async def validate_access_token(
 
     Returns
     -------
-    user : UserSchema
-        User data schema.
+    user : User
+        User's ORM.
     """
-    user = await _get_user_from_token(token, session)
-
-    return UserSchema.model_validate(user)
+    return await _get_user_from_token(token, session)
 
 
 async def validate_refresh_token(
     credentials: Annotated[HTTPAuthorizationCredentials, Security(HTTPBearer())],
     session: Annotated[AsyncSession, Depends(get_session)],
-) -> UserSchema:
+) -> User:
     """Dependency of automatic authentication.
 
     Gets the user's refresh_token in the request header, decodes it,
@@ -69,15 +66,15 @@ async def validate_refresh_token(
 
     Returns
     -------
-    user : UserSchema
-        User data schema.
+    user : User
+        User's ORM.
     """
     user = await _get_user_from_token(refresh_token := credentials.credentials, session)
 
     if user.refresh_token != refresh_token:
         raise credentials_exception
 
-    return UserSchema.model_validate(user)
+    return user
 
 
 async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> User:
