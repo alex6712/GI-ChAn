@@ -77,9 +77,7 @@ async def sign_in(
     summary="Registration.",
 )
 async def sign_up(
-    user: Annotated[
-        UserWithPasswordSchema, Body(title="Данные для регистрации пользователя.")
-    ],
+    user: Annotated[UserWithPasswordSchema, Body()],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Registration method.
