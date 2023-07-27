@@ -6,7 +6,8 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_access_token
 from app.api.schemas import FullCharacterSchema, UserSchema
-from app.api.schemas.responses import StandardResponse
+from app.api.schemas.responses import FullCharactersResponse, StandardResponse
+from app.api.services import character_service
 from app.database.session import get_session
 
 router = APIRouter(
@@ -17,7 +18,7 @@ router = APIRouter(
 
 @router.get(
     "/get",
-    response_model=StandardResponse,
+    response_model=FullCharactersResponse,
     status_code=status.HTTP_200_OK,
     summary="Returns user's characters.",
 )
@@ -39,7 +40,12 @@ async def get_characters(
     response : StandardResponse
         In development.
     """
-    return {"message": "In development."}
+    return {
+        "characters": await character_service.get_full_characters_by_username(
+            session,
+            user.username,
+        )
+    }
 
 
 @router.post(

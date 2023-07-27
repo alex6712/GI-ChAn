@@ -20,7 +20,8 @@ specify the return type of the server [1]_.
      which will automatically include a schema description.
 """
 
-from .standard import StandardResponse
+from .characters import FullCharacterResponse, FullCharactersResponse
 from .info import AppInfoResponse
 from .jwt import TokenResponse
+from .standard import StandardResponse
 from .user import UserResponse

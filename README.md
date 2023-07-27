@@ -13,9 +13,11 @@
     <a href="https://github.com/psf/black">
         <img alt="Python Code style: black" src="https://img.shields.io/badge/python%20code%20style-black-000000.svg">
     </a>
-
+    <p>
+        
 ![Preview](https://repository-images.githubusercontent.com/670568622/a8db9ebe-8821-4705-8896-3b748666b888)
 
+</p>
 </div>
 
 ## Target
