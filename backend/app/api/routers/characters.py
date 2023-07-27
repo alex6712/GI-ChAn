@@ -41,9 +41,9 @@ async def get_characters(
         In development.
     """
     return {
-        "characters": await character_service.get_full_characters_by_username(
+        "characters": await character_service.get_full_characters_by_user_id(
             session,
-            user.username,
+            user.id,
         )
     }
 

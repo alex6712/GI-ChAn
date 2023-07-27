@@ -1,5 +1,8 @@
+from uuid import UUID
+
 from pydantic import (
     BaseModel,
+    ConfigDict,
     Field,
     field_validator,
 )
@@ -13,6 +16,8 @@ class CharacterSchema(BaseModel):
 
     Attributes
     ----------
+    id : UUID
+        Character's UUID.
     name : str
         Character's name.
     legendary : bool
@@ -25,6 +30,9 @@ class CharacterSchema(BaseModel):
         Character's nation.
     """
 
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
     name: str = Field(example="Эмбер")
     legendary: bool = Field(example=False)
     weapon: str = Field(example="Стрелковое")
@@ -39,6 +47,8 @@ class UserCharacterSchema(BaseModel):
 
     Attributes
     ----------
+    id : UUID
+        Character's UUID.
     level : int
         Character's level (1-90).
     constellations : int
@@ -51,6 +61,9 @@ class UserCharacterSchema(BaseModel):
         Character's elemental burst level (1-10).
     """
 
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
     level: int = Field(example=90)
 
     @classmethod

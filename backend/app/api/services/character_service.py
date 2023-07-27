@@ -1,4 +1,4 @@
-from typing import AnyStr, List
+from typing import List
 from uuid import UUID
 
 from sqlalchemy import select
@@ -8,15 +8,15 @@ from app.api.schemas import (
     CharacterSchema,
     FullCharacterSchema,
 )
-from app.database.tables import Character, Element, Region, User, UserCharacter, Weapon
+from app.database.tables import Character, Element, Region, UserCharacter, Weapon
 
 
-async def get_full_characters_by_username(
-    session: AsyncSession, username: AnyStr
+async def get_full_characters_by_user_id(
+    session: AsyncSession, uuid_: UUID
 ) -> List[FullCharacterSchema]:
     """The function of obtaining a complete description of all user's characters.
 
-    It accepts the user's login as input, forms a query to the user_character
+    It accepts the user's UUID as input, forms a query to the user_character
     association table and receives information about all the user's characters.
 
     Complements the information by making additional queries on the
@@ -26,21 +26,17 @@ async def get_full_characters_by_username(
     ----------
     session : AsyncSession
         Request session object.
-    username : AnyStr
-        User login, unique name.
+    uuid_ : UUID
+        User's UUID.
 
     Returns
     -------
     characters : List[FullCharacterSchema]
         List of complete user's characters' representations.
     """
-    user_id: UUID = await session.scalar(
-        select(User.id).where(User.username == username)
-    )
-
     user_characters_info: List[UserCharacter] = [
         *await session.scalars(
-            select(UserCharacter).where(UserCharacter.user_id == user_id)
+            select(UserCharacter).where(UserCharacter.user_id == uuid_)
         )
     ]
 
@@ -64,10 +60,10 @@ async def get_full_characters_by_username(
     return result
 
 
-async def get_character_by_id(session: AsyncSession, id_: UUID) -> CharacterSchema:
-    """Gets general information about the character by its id.
+async def get_character_by_id(session: AsyncSession, uuid_: UUID) -> CharacterSchema:
+    """Gets general information about the character by its uuid.
 
-    Receives the character's ``id_`` as input and makes a request
+    Receives the character's ``uuid_`` as input and makes a request
     for general information about him.
 
     The attributes of ``weapon``, ``element`` and ``region``
@@ -79,7 +75,7 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> CharacterSche
     ----------
     session : AsyncSession
         Request session object.
-    id_ : UUID
+    uuid_ : UUID
         Character's UUID.
 
     Returns
@@ -88,7 +84,7 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> CharacterSche
         General information about character.
     """
     character_info: Character = await session.scalar(
-        select(Character).where(Character.id == id_)
+        select(Character).where(Character.id == uuid_)
     )
 
     weapon: str = await session.scalar(
@@ -102,6 +98,7 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> CharacterSche
     )
 
     return CharacterSchema(
+        id=uuid_,
         name=character_info.name,
         legendary=character_info.legendary,
         weapon=weapon,

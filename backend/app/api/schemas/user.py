@@ -1,4 +1,6 @@
-from pydantic import BaseModel, Field, EmailStr
+from uuid import UUID
+
+from pydantic import BaseModel, ConfigDict, EmailStr, Field
 from pydantic_extra_types.phone_numbers import PhoneNumber
 
 
@@ -9,6 +11,8 @@ class UserSchema(BaseModel):
 
     Attributes
     ----------
+    id : UUID
+        User's UUID.
     username : str
         User login.
     email : EmailStr
@@ -17,6 +21,9 @@ class UserSchema(BaseModel):
         The user's mobile phone number.
     """
 
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
     username: str = Field(example="someone")
     email: EmailStr = Field(default=None, example="someone@post.domen")
     phone: PhoneNumber = Field(default=None, example="+7 900 000-00-00")

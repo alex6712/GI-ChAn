@@ -2,12 +2,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app import get_settings
-from app.api.routers import (
-    auth_router,
-    characters_router,
-    root_router,
-    users_router,
-)
+from app.api.routers import api_v1_router
 
 settings = get_settings()
 
@@ -50,7 +45,4 @@ characters_analyzer.add_middleware(
     allow_headers=["*"],
 )
 
-characters_analyzer.include_router(auth_router)
-characters_analyzer.include_router(characters_router)
-characters_analyzer.include_router(root_router)
-characters_analyzer.include_router(users_router)
+characters_analyzer.include_router(api_v1_router)

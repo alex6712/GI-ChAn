@@ -16,7 +16,7 @@ from app.api.services import user_service
 from app.database.session import get_session
 from app.database.tables import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/auth/sign_in")
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign_in")
 
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
@@ -48,7 +48,7 @@ async def validate_access_token(
     """
     user = await _get_user_from_token(token, session)
 
-    return UserSchema(username=user.username, email=user.email, phone=user.phone)
+    return UserSchema.model_validate(user)
 
 
 async def validate_refresh_token(
@@ -77,7 +77,7 @@ async def validate_refresh_token(
     if user.refresh_token != refresh_token:
         raise credentials_exception
 
-    return UserSchema(username=user.username, email=user.email, phone=user.phone)
+    return UserSchema.model_validate(user)
 
 
 async def _get_user_from_token(token: AnyStr, session: AsyncSession) -> User:

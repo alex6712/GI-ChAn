@@ -13,7 +13,17 @@ because for convenience [1]_ each router is called ``router`` in separate module
 .. [1] For code consistency and readability.
 """
 
+from fastapi import APIRouter
+
 from .auth import router as auth_router
 from .characters import router as characters_router
 from .root import router as root_router
 from .users import router as users_router
+
+api_v1_router = APIRouter(
+    prefix="/api/v1",
+)
+api_v1_router.include_router(auth_router)
+api_v1_router.include_router(characters_router)
+api_v1_router.include_router(root_router)
+api_v1_router.include_router(users_router)
