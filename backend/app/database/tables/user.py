@@ -45,7 +45,7 @@ class User(tables.Base):
             f"username={self.username!r}, "
             f"password={self.password!r}, "
             f"email={self.email!r}, "
-            f"phone={self.phone!r}"
+            f"phone={self.phone!r}, "
             f"refresh_token={self.refresh_token!r}"
             f")>"
         )
