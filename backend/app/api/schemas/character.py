@@ -24,6 +24,7 @@ class CharacterSchema(BaseModel):
     region : str
         Character's nation.
     """
+
     name: str = Field(example="Эмбер")
     legendary: bool = Field(example=False)
     weapon: str = Field(example="Стрелковое")
@@ -49,25 +50,26 @@ class UserCharacterSchema(BaseModel):
     burst_level : int
         Character's elemental burst level (1-10).
     """
+
     level: int = Field(example=90)
 
     @classmethod
     @field_validator("level", mode="before")
-    def check_character_level_interval(cls, v: int) -> int:
-        if 1 <= v <= 90:
-            return v
+    def check_character_level_interval(cls, value: int) -> int:
+        if 1 <= value <= 90:
+            return value
 
-        raise ValueError(v)
+        raise ValueError(value)
 
     constellations: int = Field(example=3)
 
     @classmethod
     @field_validator("constellations", mode="before")
-    def check_constellations_interval(cls, v: int) -> int:
-        if 1 <= v <= 6:
-            return v
+    def check_constellations_interval(cls, value: int) -> int:
+        if 1 <= value <= 6:
+            return value
 
-        raise ValueError(v)
+        raise ValueError(value)
 
     attack_level: int = Field(example=1)
     skill_level: int = Field(example=6)
@@ -75,11 +77,11 @@ class UserCharacterSchema(BaseModel):
 
     @classmethod
     @field_validator("attack_level", "skill_level", "burst_level", mode="before")
-    def check_skill_level_interval(cls, v: int) -> int:
-        if 1 <= v <= 10:
-            return v
+    def check_skill_level_interval(cls, value: int) -> int:
+        if 1 <= value <= 10:
+            return value
 
-        raise ValueError(v)
+        raise ValueError(value)
 
 
 class FullCharacterSchema(CharacterSchema, UserCharacterSchema):
@@ -92,4 +94,3 @@ class FullCharacterSchema(CharacterSchema, UserCharacterSchema):
     CharacterSchema
     UserCharacterSchema
     """
-    pass

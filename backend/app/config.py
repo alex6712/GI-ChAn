@@ -1,12 +1,7 @@
 from functools import lru_cache
 from typing import List
 
-from pydantic import (
-    EmailStr,
-    IPvAnyAddress,
-    AnyHttpUrl,
-    field_validator,
-)
+from pydantic import AnyHttpUrl, EmailStr, IPvAnyAddress, field_validator
 from pydantic_settings import BaseSettings
 
 
@@ -68,6 +63,7 @@ class Settings(BaseSettings):
     REFRESH_TOKEN_LIFETIME_DAYS : int
         Refresh token lifetime in days.
     """
+
     APP_NAME: str
     APP_VERSION: str
     APP_DESCRIPTION: str
@@ -84,14 +80,14 @@ class Settings(BaseSettings):
 
     @classmethod
     @field_validator("BACKEND_CORS_ORIGINS", mode="before")
-    def assemble_cors_origins(cls, v: List[str] | str) -> List[str] | str:
-        if isinstance(v, str) and not v.startswith("["):
-            return [i.strip() for i in v.split(",")]
+    def assemble_cors_origins(cls, value: List[str] | str) -> List[str] | str:
+        if isinstance(value, str) and not value.startswith("["):
+            return [i.strip() for i in value.split(",")]
 
-        elif isinstance(v, (list, str)):
-            return v
+        if isinstance(value, (list, str)):
+            return value
 
-        raise ValueError(v)
+        raise ValueError(value)
 
     DOMAIN: str | IPvAnyAddress
 

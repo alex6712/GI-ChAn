@@ -1,14 +1,15 @@
 <div align="center">
-  <p>
-    <h1>
-      <b>GI-ChAn</b>
-    </h1>
-  </p>
+  <h1>
+    <b>GI-ChAn</b>
+  </h1>
   <p>
     <b>Characters analyzer and automatic builds generator for Genshin Impact.</b>
   </p>
   <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/alex6712/GI-ChAn?logo=GitHub">
   <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/alex6712/GI-ChAn?logo=GitHub">
+  <a href="https://github.com/psf/black">
+    <img alt="Code style: black" src="https://img.shields.io/badge/code%20style-black-000000.svg">
+  </a>
   <p>
     
 ![Preview](https://repository-images.githubusercontent.com/670568622/a8db9ebe-8821-4705-8896-3b748666b888)

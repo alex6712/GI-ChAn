@@ -12,4 +12,3 @@ class UserResponse(StandardResponse, UserSchema):
     schemas.responses.standard.StandardResponse
     schemas.user.UserSchema
     """
-    pass

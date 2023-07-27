@@ -1,13 +1,8 @@
 from typing import Annotated, AnyStr
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    status,
-    Path,
-)
-from fastapi.responses import RedirectResponse
+from fastapi import APIRouter, Depends, Path, status
 from fastapi.exceptions import HTTPException
+from fastapi.responses import RedirectResponse
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -23,8 +18,13 @@ router = APIRouter(
 )
 
 
-@router.get("/me", response_model=UserResponse, status_code=status.HTTP_200_OK, summary="Personal page.")
-async def me(user: Annotated[UserSchema, Depends(validate_access_token)]):
+@router.get(
+    "/me",
+    response_model=UserResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Personal page.",
+)
+async def get_me(user: Annotated[UserSchema, Depends(validate_access_token)]):
     """User's personal page method.
 
     Returns information about the owner of the token.
@@ -48,10 +48,13 @@ async def me(user: Annotated[UserSchema, Depends(validate_access_token)]):
     status_code=status.HTTP_200_OK,
     summary="User page.",
 )
-async def person(
-        username: Annotated[AnyStr, Path(title="Логин пользователя, на чью личную страницу необходимо перейти.")],
-        user: Annotated[UserSchema, Depends(validate_access_token)],
-        session: Annotated[AsyncSession, Depends(get_session)],
+async def get_person(
+    username: Annotated[
+        AnyStr,
+        Path(title="Логин пользователя, на чью личную страницу необходимо перейти."),
+    ],
+    user: Annotated[UserSchema, Depends(validate_access_token)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """User's page method.
 
@@ -79,7 +82,7 @@ async def person(
     if (result := await user_service.get_user_by_username(session, username)) is None:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User \"{username}\" not found.",
+            detail=f'User "{username}" not found.',
         )
 
     try:

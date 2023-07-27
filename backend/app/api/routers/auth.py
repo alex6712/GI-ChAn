@@ -1,17 +1,7 @@
 import re
-from typing import (
-    Annotated,
-    Dict,
-    AnyStr,
-)
+from typing import Annotated, AnyStr, Dict
 
-from fastapi import (
-    APIRouter,
-    Depends,
-    status,
-    HTTPException,
-    Body,
-)
+from fastapi import APIRouter, Body, Depends, HTTPException, status
 from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -37,8 +27,8 @@ router = APIRouter(
     summary="Authentication.",
 )
 async def sign_in(
-        form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
-        session: Annotated[AsyncSession, Depends(get_session)],
+    form_data: Annotated[OAuth2PasswordRequestForm, Depends()],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Authentication method.
 
@@ -87,8 +77,10 @@ async def sign_in(
     summary="Registration.",
 )
 async def sign_up(
-        user: Annotated[UserWithPasswordSchema, Body(title="Данные для регистрации пользователя.")],
-        session: Annotated[AsyncSession, Depends(get_session)]
+    user: Annotated[
+        UserWithPasswordSchema, Body(title="Данные для регистрации пользователя.")
+    ],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Registration method.
 
@@ -112,15 +104,15 @@ async def sign_up(
 
     try:
         await session.commit()
-    except IntegrityError as e:
+    except IntegrityError as integrity_error:
         await session.rollback()
 
-        if (result := re.search(r'"\((.*)\)=\((.*)\)"', str(e.orig))) is not None:
+        if result := re.search(r'"\((.*)\)=\((.*)\)"', str(integrity_error.orig)):
             column, value = result.groups()
 
             raise HTTPException(
                 status_code=status.HTTP_409_CONFLICT,
-                detail=f"User with {column}=\"{value}\" already exists!",
+                detail=f'User with {column}="{value}" already exists!',
             )
 
         raise HTTPException(
@@ -128,7 +120,7 @@ async def sign_up(
             detail="Not enough data in request.",
         )
 
-    return {"code": status.HTTP_201_CREATED, "message": f"User created successfully."}
+    return {"code": status.HTTP_201_CREATED, "message": "User created successfully."}
 
 
 @router.get(
@@ -138,13 +130,14 @@ async def sign_up(
     summary="Refresh access token.",
 )
 async def refresh(
-        user: Annotated[UserSchema, Depends(validate_refresh_token)],
-        session: Annotated[AsyncSession, Depends(get_session)],
+    user: Annotated[UserSchema, Depends(validate_refresh_token)],
+    session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Re-authentication method via refresh token.
 
-    Gets a refresh_token in the header, checks for a match in the database using the encoded information,
-    overwrites the refresh token in the database and returns new ``access_token`` + ``refresh_token`` pair.
+    Gets a refresh_token in the header, checks for a match in the database
+    using the encoded information, overwrites the refresh token in the database and
+    returns a new ``access_token`` + ``refresh_token`` pair.
 
     Parameters
     ----------
@@ -161,7 +154,9 @@ async def refresh(
     return {**await _get_jwt_pair(user.username, session), "token_type": "bearer"}
 
 
-async def _get_jwt_pair(username: AnyStr, session: AsyncSession) -> Dict[AnyStr, AnyStr]:
+async def _get_jwt_pair(
+    username: AnyStr, session: AsyncSession
+) -> Dict[AnyStr, AnyStr]:
     """A function to create a new pair of JWTs.
 
     Creates an ``access_token`` and ``refresh_token`` pair, overwrites the user's refresh token

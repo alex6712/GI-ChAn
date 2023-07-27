@@ -1,12 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import (
-    String,
-    PrimaryKeyConstraint,
-    UniqueConstraint,
-    func,
-)
+from sqlalchemy import PrimaryKeyConstraint, String, UniqueConstraint, func
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -35,16 +30,22 @@ class User(tables.Base):
     password: Mapped[str] = mapped_column(String(256))
     email: Mapped[str] = mapped_column(String(256), nullable=True)
     phone: Mapped[str] = mapped_column(String(256), nullable=True)
-    refresh_token: Mapped[str] = mapped_column(String(256), nullable=True, comment="Refresh token for access token.")
+    refresh_token: Mapped[str] = mapped_column(
+        String(256), nullable=True, comment="Refresh token for access token."
+    )
 
-    characters: Mapped[List["tables.UserCharacter"]] = relationship("UserCharacter", back_populates="user")
+    characters: Mapped[List["tables.UserCharacter"]] = relationship(
+        "UserCharacter", back_populates="user"
+    )
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}(" \
-               f"id={self.id!r}, " \
-               f"username={self.username!r}, " \
-               f"password={self.password!r}, " \
-               f"email={self.email!r}, " \
-               f"phone={self.phone!r}" \
-               f"refresh_token={self.refresh_token!r}" \
-               f")>"
+        return (
+            f"<{self.__class__.__name__}("
+            f"id={self.id!r}, "
+            f"username={self.username!r}, "
+            f"password={self.password!r}, "
+            f"email={self.email!r}, "
+            f"phone={self.phone!r}"
+            f"refresh_token={self.refresh_token!r}"
+            f")>"
+        )

@@ -1,15 +1,12 @@
 import uuid
 
-from sqlalchemy import (
-    PrimaryKeyConstraint,
-    ForeignKeyConstraint,
-)
+from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
 )
-from sqlalchemy.types import Uuid, Integer
+from sqlalchemy.types import Integer, Uuid
 
 from app.database import tables
 
@@ -34,7 +31,8 @@ class UserCharacter(tables.Base):
             ondelete="CASCADE",
         ),
         {
-            "comment": "Table representing many-to-many relation between user and character tables.",
+            "comment": "Table representing many-to-many "
+            "relation between user and character tables.",
         },
     )
 
@@ -47,15 +45,19 @@ class UserCharacter(tables.Base):
     character_burst_level: Mapped[int] = mapped_column(Integer())
 
     user: Mapped["tables.User"] = relationship("User", back_populates="characters")
-    character: Mapped["tables.Character"] = relationship("Character", back_populates="users")
+    character: Mapped["tables.Character"] = relationship(
+        "Character", back_populates="users"
+    )
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}(" \
-               f"user_id={self.user_id!r}, " \
-               f"character_id={self.character_id!r}, " \
-               f"character_level={self.character_level!r}, " \
-               f"character_constellations={self.character_constellations!r}, " \
-               f"character_attack_level={self.character_attack_level!r}," \
-               f"character_skill_level={self.character_skill_level!r}," \
-               f"character_burst_level={self.character_burst_level!r}," \
-               f")>"
+        return (
+            f"<{self.__class__.__name__}("
+            f"user_id={self.user_id!r}, "
+            f"character_id={self.character_id!r}, "
+            f"character_level={self.character_level!r}, "
+            f"character_constellations={self.character_constellations!r}, "
+            f"character_attack_level={self.character_attack_level!r}, "
+            f"character_skill_level={self.character_skill_level!r}, "
+            f"character_burst_level={self.character_burst_level!r}"
+            f")>"
+        )

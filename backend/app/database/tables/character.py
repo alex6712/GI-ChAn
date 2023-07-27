@@ -1,13 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import (
-    String,
-    PrimaryKeyConstraint,
-    ForeignKeyConstraint,
-    func,
-    Boolean,
-)
+from sqlalchemy import Boolean, ForeignKeyConstraint, PrimaryKeyConstraint, String, func
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -59,17 +53,27 @@ class Character(tables.Base):
     element_id: Mapped[uuid.UUID] = mapped_column(Uuid())
     region_id: Mapped[uuid.UUID] = mapped_column(Uuid())
 
-    weapon: Mapped["tables.Weapon"] = relationship("Weapon", back_populates="characters")
-    element: Mapped["tables.Element"] = relationship("Element", back_populates="characters")
-    region: Mapped["tables.Region"] = relationship("Region", back_populates="characters")
-    users: Mapped[List["tables.UserCharacter"]] = relationship("UserCharacter", back_populates="character")
+    weapon: Mapped["tables.Weapon"] = relationship(
+        "Weapon", back_populates="characters"
+    )
+    element: Mapped["tables.Element"] = relationship(
+        "Element", back_populates="characters"
+    )
+    region: Mapped["tables.Region"] = relationship(
+        "Region", back_populates="characters"
+    )
+    users: Mapped[List["tables.UserCharacter"]] = relationship(
+        "UserCharacter", back_populates="character"
+    )
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}(" \
-               f"id={self.id!r}, " \
-               f"name={self.name!r}, " \
-               f"legendary={self.legendary!r}, " \
-               f"weapon_id={self.weapon_id!r}, " \
-               f"element_id={self.element_id!r}" \
-               f"region_id={self.region_id!r}" \
-               f")>"
+        return (
+            f"<{self.__class__.__name__}("
+            f"id={self.id!r}, "
+            f"name={self.name!r}, "
+            f"legendary={self.legendary!r}, "
+            f"weapon_id={self.weapon_id!r}, "
+            f"element_id={self.element_id!r}"
+            f"region_id={self.region_id!r}"
+            f")>"
+        )

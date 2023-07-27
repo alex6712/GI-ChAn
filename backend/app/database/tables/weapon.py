@@ -1,11 +1,7 @@
 import uuid
 from typing import List
 
-from sqlalchemy import (
-    String,
-    PrimaryKeyConstraint,
-    func,
-)
+from sqlalchemy import PrimaryKeyConstraint, String, func
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
@@ -29,10 +25,14 @@ class Weapon(tables.Base):
     id: Mapped[uuid.UUID] = mapped_column(Uuid(), server_default=func.gen_random_uuid())
     title: Mapped[str] = mapped_column(String(256))
 
-    characters: Mapped[List["tables.Character"]] = relationship("Character", back_populates="weapon")
+    characters: Mapped[List["tables.Character"]] = relationship(
+        "Character", back_populates="weapon"
+    )
 
     def __repr__(self) -> str:
-        return f"<{self.__class__.__name__}(" \
-               f"id={self.id!r}, " \
-               f"title={self.title!r}, " \
-               f")>"
+        return (
+            f"<{self.__class__.__name__}("
+            f"id={self.id!r}, "
+            f"title={self.title!r}, "
+            f")>"
+        )

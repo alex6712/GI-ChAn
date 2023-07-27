@@ -16,6 +16,7 @@ class UserSchema(BaseModel):
     phone : PhoneNumber
         The user's mobile phone number.
     """
+
     username: str = Field(example="someone")
     email: EmailStr = Field(default=None, example="someone@post.domen")
     phone: PhoneNumber = Field(default=None, example="+7 900 000-00-00")
@@ -31,4 +32,5 @@ class UserWithPasswordSchema(UserSchema):
     password : str
         User password.
     """
+
     password: str = Field(example="password")

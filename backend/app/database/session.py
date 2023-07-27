@@ -12,7 +12,9 @@ engine: AsyncEngine = create_async_engine(
     echo=False,
     pool_pre_ping=True,
 )
-AsyncSessionMaker: async_sessionmaker = async_sessionmaker(bind=engine, class_=AsyncSession, expire_on_commit=False)
+AsyncSessionMaker: async_sessionmaker = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
 
 
 async def get_session() -> AsyncSession:

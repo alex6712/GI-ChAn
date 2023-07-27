@@ -26,15 +26,17 @@ async def initialize():
 
     engine: AsyncEngine = create_async_engine(
         url=f"postgresql+asyncpg://{database_user}:{database_password}@{settings.DOMAIN}"
-            f":{settings.DATABASE_PORT}/{settings.DATABASE_NAME}",
+        f":{settings.DATABASE_PORT}/{settings.DATABASE_NAME}",
         echo=False,
         pool_pre_ping=True,
     )
 
-    error = "\n\033[91mWhile initializing database:" \
-            "\n\tFAIL:  {fail}" \
-            "\n\tCAUSE: {cause}" \
-            "\nContinuing without initializing...\n"
+    error = (
+        "\n\033[91mWhile initializing database:"
+        "\n\tFAIL:  {fail}"
+        "\n\tCAUSE: {cause}"
+        "\nContinuing without initializing...\n"
+    )
 
     try:
         async with engine.begin() as conn:
@@ -43,8 +45,18 @@ async def initialize():
         async with engine.begin() as conn:
             await conn.run_sync(Base.metadata.create_all)
     except ConnectionDoesNotExistError:
-        print(error.format(fail="Unable to establish a connection.", cause="Incorrect password or username."))
+        print(
+            error.format(
+                fail="Unable to establish a connection.",
+                cause="Incorrect password or username.",
+            )
+        )
     except ProgrammingError:
-        print(error.format(fail="Unable to establish a connection.", cause="User is not the superuser."))
+        print(
+            error.format(
+                fail="Unable to establish a connection.",
+                cause="User is not the superuser.",
+            )
+        )
     else:
         print("\n\033[92mDatabase initialized successfully.\n")

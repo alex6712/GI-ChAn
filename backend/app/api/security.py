@@ -3,7 +3,9 @@ from passlib.context import CryptContext
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
 
-def hash_(secret: str | bytes, scheme: str = None, category: str = None, **kwargs) -> str:
+def hash_(
+    secret: str | bytes, scheme: str = None, category: str = None, **kwargs
+) -> str:
     """Proxy for ``CriptContext.hash()`` method.
 
     Gets the parameters needed to perform hashing and returns the result.
@@ -30,7 +32,13 @@ def hash_(secret: str | bytes, scheme: str = None, category: str = None, **kwarg
     return pwd_context.hash(secret, scheme, category, **kwargs)
 
 
-def verify(secret: str | bytes, hashed: str | bytes, scheme: str = None, category: str = None, **kwargs) -> bool:
+def verify(
+    secret: str | bytes,
+    hashed: str | bytes,
+    scheme: str = None,
+    category: str = None,
+    **kwargs
+) -> bool:
     """Proxy for ``CriptContext.verify()`` method.
 
     Checks the passed password against the passed hash.
