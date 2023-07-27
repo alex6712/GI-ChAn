@@ -51,7 +51,7 @@ async def get_me(user: Annotated[UserSchema, Depends(validate_access_token)]):
 async def get_person(
     username: Annotated[
         AnyStr,
-        Path(title="Логин пользователя, на чью личную страницу необходимо перейти."),
+        Path(description="Login of the user whose personal page you want to go to."),
     ],
     user: Annotated[UserSchema, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
