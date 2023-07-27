@@ -9,7 +9,7 @@
         <b>Characters analyzer and automatic builds generator for Genshin Impact.</b>
     </p>
     <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/alex6712/GI-ChAn?logo=GitHub">
-    <img alt="GitHub Repo Size" src="https://img.shields.io/github/repo-size/alex6712/GI-ChAn?logo=GitHub">
+    <img alt="GitHub Code Size" src="https://img.shields.io/github/languages/code-size/alex6712/GI-ChAn?logo=GitHub">
     <a href="https://github.com/psf/black">
         <img alt="Python Code style: black" src="https://img.shields.io/badge/python%20code%20style-black-000000.svg">
     </a>
