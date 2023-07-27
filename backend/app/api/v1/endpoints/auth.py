@@ -8,11 +8,12 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_refresh_token
 from app.api.jwt import create_jwt_pair
-from app.api.schemas import UserSchema, UserWithPasswordSchema
+from app.api.schemas import UserWithPasswordSchema
 from app.api.schemas.responses import StandardResponse, TokenResponse
 from app.api.security import hash_, verify
 from app.api.services import user_service
 from app.database.session import get_session
+from app.database.tables import User
 
 router = APIRouter(
     prefix="/auth",
@@ -50,8 +51,6 @@ async def sign_in(
     user = await user_service.get_user_by_username(session, form_data.username)
 
     if not user:
-        await session.rollback()
-
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password.",
@@ -59,15 +58,13 @@ async def sign_in(
         )
 
     if not verify(form_data.password, user.password):
-        await session.rollback()
-
         raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED,
             detail="Incorrect username or password.",
             headers={"WWW-Authenticate": "Bearer"},
         )
 
-    return {**await _get_jwt_pair(user.username, session), "token_type": "bearer"}
+    return {**await _get_jwt_pair(user, session), "token_type": "bearer"}
 
 
 @router.post(
@@ -98,10 +95,8 @@ async def sign_up(
     """
     user.password = hash_(user.password)
 
-    user_service.add_user(session, user)
-
     try:
-        await session.commit()
+        await user_service.add_user(session, user)
     except IntegrityError as integrity_error:
         await session.rollback()
 
@@ -128,7 +123,7 @@ async def sign_up(
     summary="Refresh access token.",
 )
 async def refresh(
-    user: Annotated[UserSchema, Depends(validate_refresh_token)],
+    user: Annotated[User, Depends(validate_refresh_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Re-authentication method via refresh token.
@@ -139,7 +134,7 @@ async def refresh(
 
     Parameters
     ----------
-    user : UserSchema
+    user : User
         The user is derived from a dependency on automatic authentication.
     session : AsyncSession
         Request session object.
@@ -149,12 +144,10 @@ async def refresh(
     response : TokenResponse
         Server response model with a nested JWT pair.
     """
-    return {**await _get_jwt_pair(user.username, session), "token_type": "bearer"}
+    return {**await _get_jwt_pair(user, session), "token_type": "bearer"}
 
 
-async def _get_jwt_pair(
-    username: AnyStr, session: AsyncSession
-) -> Dict[AnyStr, AnyStr]:
+async def _get_jwt_pair(user: User, session: AsyncSession) -> Dict[AnyStr, AnyStr]:
     """A function to create a new pair of JWTs.
 
     Creates an ``access_token`` and ``refresh_token`` pair, overwrites the user's refresh token
@@ -162,8 +155,8 @@ async def _get_jwt_pair(
 
     Parameters
     ----------
-    username : AnyStr
-        Unique username.
+    user : User
+        User's ORM.
     session : AsyncSession
         Request session object.
 
@@ -177,12 +170,10 @@ async def _get_jwt_pair(
         ``refresh_token``:
             Refresh token (``str``).
     """
-    tokens = create_jwt_pair({"sub": username})
-
-    await user_service.update_refresh_token(session, username, tokens["refresh_token"])
+    tokens = create_jwt_pair({"sub": user.username})
 
     try:
-        await session.commit()
+        await user_service.update_refresh_token(session, user, tokens["refresh_token"])
     except IntegrityError:
         await session.rollback()
 

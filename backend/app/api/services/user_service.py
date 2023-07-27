@@ -26,7 +26,7 @@ async def get_user_by_username(session: AsyncSession, username: AnyStr) -> User:
 
 
 async def update_refresh_token(
-    session: AsyncSession, username: AnyStr, refresh_token: AnyStr
+    session: AsyncSession, user: User, refresh_token: AnyStr
 ):
     """Overwrites the user's refresh token.
 
@@ -40,29 +40,24 @@ async def update_refresh_token(
     ----------
     session : AsyncSession
         Request session object.
-    username : AnyStr
-        User login, unique name.
+    user : User
+        User's ORM.
     refresh_token : AnyStr
         New refresh token.
     """
-    (await get_user_by_username(session, username)).refresh_token = refresh_token
+    user.refresh_token = refresh_token
+    await session.commit()
 
 
-def add_user(session: AsyncSession, user: UserWithPasswordSchema):
+async def add_user(session: AsyncSession, user_info: UserWithPasswordSchema):
     """Adds a user record to the database.
 
     Parameters
     ----------
     session : AsyncSession
         Request session object.
-    user : UserWithPasswordSchema
+    user_info : UserWithPasswordSchema
         Schema of a user object with a password.
     """
-    session.add(
-        User(
-            username=user.username,
-            password=user.password,
-            email=user.email,
-            phone=user.phone,
-        )
-    )
+    session.add(User(**user_info.model_dump()))
+    await session.commit()

@@ -13,12 +13,5 @@ have a password record to a schema without a password.
      https://docs.pydantic.dev/
 """
 
-from .user import (
-    UserSchema,
-    UserWithPasswordSchema,
-)
-from .character import (
-    CharacterSchema,
-    UserCharacterSchema,
-    FullCharacterSchema,
-)
+from .character import CharacterSchema, FullCharacterSchema, UserCharacterSchema
+from .user import UserWithPasswordSchema
