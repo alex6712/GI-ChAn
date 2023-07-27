@@ -5,7 +5,7 @@ from fastapi import APIRouter, Body, Depends, Path, status
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_access_token
-from app.api.schemas import FullCharacterSchema, UserSchema
+from app.api.schemas import UserCharacterSchema, UserSchema
 from app.api.schemas.responses import FullCharactersResponse, StandardResponse
 from app.api.services import character_service
 from app.database.session import get_session
@@ -55,7 +55,7 @@ async def get_characters(
     summary="Append character to user's characters.",
 )
 async def append_character(
-    character: Annotated[FullCharacterSchema, Body()],
+    character: Annotated[UserCharacterSchema, Body()],
     user: Annotated[UserSchema, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
@@ -63,7 +63,7 @@ async def append_character(
 
     Parameters
     ----------
-    character : FullCharacterSchema
+    character : UserCharacterSchema
         Character's data to append.
     user : UserSchema
         The user is received from dependence on authorization.
@@ -85,7 +85,7 @@ async def append_character(
     summary="Update character's data.",
 )
 async def put_character(
-    character: Annotated[FullCharacterSchema, Body()],
+    character: Annotated[UserCharacterSchema, Body()],
     user: Annotated[UserSchema, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
@@ -93,7 +93,7 @@ async def put_character(
 
     Parameters
     ----------
-    character : FullCharacterSchema
+    character : UserCharacterSchema
         Character's data to update.
     user : UserSchema
         The user is received from dependence on authorization.
