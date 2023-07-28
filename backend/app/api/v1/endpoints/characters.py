@@ -1,7 +1,9 @@
-from typing import Annotated, List
+import re
+from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, Path, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
+from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_access_token
@@ -9,7 +11,7 @@ from app.api.schemas import FullCharacterSchema, UserCharacterSchema
 from app.api.schemas.responses import FullCharactersResponse, StandardResponse
 from app.api.services import character_service
 from app.database.session import get_session
-from app.database.tables import Character, User, UserCharacter
+from app.database.tables import Character, User
 
 router = APIRouter(
     prefix="/characters",
@@ -23,10 +25,7 @@ router = APIRouter(
     status_code=status.HTTP_200_OK,
     summary="Returns user's characters.",
 )
-async def get_characters(
-    user: Annotated[User, Depends(validate_access_token)],
-    session: Annotated[AsyncSession, Depends(get_session)],
-):
+async def get_characters(user: Annotated[User, Depends(validate_access_token)]):
     """A method for obtaining information about the user's characters.
 
     The method gets the user's ORM from the dependency on authorization,
@@ -40,29 +39,17 @@ async def get_characters(
     ----------
     user : User
         The user is received from dependence on authorization.
-    session : AsyncSession
-        Request session object.
 
     Returns
     -------
     response : FullCharactersResponse
         In development.
     """
-    user_characters: List[
-        UserCharacter
-    ] = await character_service.get_characters_by_user(user)  # lol, black, what are you doing?
-
     result = []
-    for user_character in user_characters:
-        id_: UUID = user_character.character_id
 
-        # get character ORM by id
-        character: Character = await character_service.get_character_by_id(session, id_)
-
-        # get attached weapon, element and region
-        weapon = await character.awaitable_attrs.weapon
-        element = await character.awaitable_attrs.element
-        region = await character.awaitable_attrs.region
+    for user_character in await character_service.get_characters_by_user(user):
+        # get character's ORM
+        character: Character = await user_character.awaitable_attrs.character
 
         # compose argument-value pairs for FullCharacterSchema
         character_info = UserCharacterSchema.model_validate(user_character).model_dump()
@@ -70,9 +57,9 @@ async def get_characters(
             {
                 "name": character.name,
                 "legendary": character.legendary,
-                "weapon": weapon.title,
-                "element": element.title,
-                "region": region.title,
+                "weapon": (await character.awaitable_attrs.weapon).title,
+                "element": (await character.awaitable_attrs.element).title,
+                "region": (await character.awaitable_attrs.region).title,
             }
         )
 
@@ -106,9 +93,35 @@ async def append_character(
     Returns
     -------
     response : StandardResponse
-        In development.
+        Positive feedback about character's attaching.
     """
-    return {"message": "In development."}
+    try:
+        await character_service.add_character_to_user(session, user.id, character)
+    except IntegrityError as integrity_error:
+        await session.rollback()
+
+        error_class = re.search(
+            r"<class '[\w.]*\.(.*)'>", str(integrity_error.orig)
+        ).group(1)
+
+        match error_class:
+            case "UniqueViolationError":
+                raise HTTPException(
+                    status_code=status.HTTP_409_CONFLICT,
+                    detail=f"Character with uuid={character.id} already attached to the user.",
+                )
+            case "ForeignKeyViolationError":
+                raise HTTPException(
+                    status_code=status.HTTP_404_NOT_FOUND,
+                    detail=f"Entity with uuid={character.id} not found.",
+                )
+            case _:
+                raise HTTPException(
+                    status_code=status.HTTP_400_BAD_REQUEST,
+                    detail="Incorrect request.",
+                )
+
+    return {"message": "Character appended successfully."}
 
 
 @router.put(
