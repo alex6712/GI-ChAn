@@ -1,7 +1,7 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas import UserCharacterSchema
@@ -57,7 +57,7 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> Character:
 
 
 async def add_character_to_user(
-        session: AsyncSession, user_id: UUID, data: UserCharacterSchema
+    session: AsyncSession, user_id: UUID, data: UserCharacterSchema
 ):
     """Adds a character entry.
 
@@ -83,3 +83,50 @@ async def add_character_to_user(
         )
     )
     await session.commit()
+
+
+async def update_user_character(
+    session: AsyncSession, user_id: UUID, data: UserCharacterSchema
+) -> UUID:
+    """Updating a character entry.
+
+    The function updates the record in the database about
+    the character associated with the user.
+
+    If the UPDATE request returns None, no commit occurs.
+
+    Parameters
+    ----------
+    session : AsyncSession
+        Request session object.
+    user_id : UUID
+        User's UUID.
+    data : UserCharacterSchema
+        Character's info to add.
+
+    Returns
+    -------
+    result : UUID or None
+        Result of the UPDATE request with returning ``user_id`` parameter.
+    """
+    result = await session.scalar(
+        update(UserCharacter)
+        .where(
+            and_(
+                UserCharacter.user_id == user_id, UserCharacter.character_id == data.id
+            )
+        )
+        .values(
+            character_level=data.level,
+            character_constellations=data.constellations,
+            character_attack_level=data.attack_level,
+            character_skill_level=data.skill_level,
+            character_burst_level=data.burst_level,
+        )
+        .returning(UserCharacter.user_id)
+    )
+
+    if result:
+        await session.commit()
+
+    return result
