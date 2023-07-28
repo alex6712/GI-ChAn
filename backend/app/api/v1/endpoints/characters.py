@@ -113,7 +113,7 @@ async def append_character(
             case "ForeignKeyViolationError":
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Entity with uuid={character.id} not found.",
+                    detail=f"Entity with uuid={character.id} not found.",  # user or character
                 )
             case _:
                 raise HTTPException(
@@ -137,6 +137,12 @@ async def put_character(
 ):
     """Method for updating an existing character's data.
 
+    The method receives information about the user and the associated
+    character, and then updates the record in the database.
+
+    If the service does not find a matching update record, it returns None,
+    after which the method returns HTTP code 404.
+
     Parameters
     ----------
     character : UserCharacterSchema
@@ -149,9 +155,19 @@ async def put_character(
     Returns
     -------
     response : StandardResponse
-        In development.
+        Positive feedback about character's data updating.
     """
-    return {"message": "In development."}
+    result = await character_service.update_user_character(session, user.id, character)
+
+    if not result:
+        await session.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Character with uuid={character.id} not found.",
+        )
+
+    return {"message": "Data updated successfully."}
 
 
 @router.delete(
