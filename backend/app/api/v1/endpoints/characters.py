@@ -45,7 +45,7 @@ async def get_characters(user: Annotated[User, Depends(validate_access_token)]):
     response : FullCharactersResponse
         In development.
     """
-    result = []
+    characters = []
 
     for user_character in await character_service.get_characters_by_user(user):
         # get character's ORM
@@ -63,9 +63,9 @@ async def get_characters(user: Annotated[User, Depends(validate_access_token)]):
             }
         )
 
-        result.append(FullCharacterSchema(**character_info))
+        characters.append(FullCharacterSchema(**character_info))
 
-    return {"characters": result}
+    return {"characters": characters}
 
 
 @router.post(
@@ -111,9 +111,10 @@ async def append_character(
                     detail=f"Character with uuid={character.id} already attached to the user.",
                 )
             case "ForeignKeyViolationError":
+                # if a user isn't found, then 401 Error is raised by ``validate_access_token``
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Entity with uuid={character.id} not found.",  # user or character
+                    detail=f"Character with uuid={character.id} not found.",
                 )
             case _:
                 raise HTTPException(
@@ -157,9 +158,7 @@ async def put_character(
     response : StandardResponse
         Positive feedback about character's data updating.
     """
-    result = await character_service.update_user_character(session, user.id, character)
-
-    if not result:
+    if not await character_service.update_user_character(session, user.id, character):
         await session.rollback()
 
         raise HTTPException(
