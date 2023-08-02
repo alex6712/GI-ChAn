@@ -2,7 +2,7 @@ import re
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
@@ -177,12 +177,18 @@ async def put_character(
 )
 async def delete_character(
     character_id: Annotated[
-        UUID, Path(description="The UUID of the character to delete.")
+        UUID, Query(description="The UUID of the character to delete.")
     ],
     user: Annotated[User, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
     """Method for deleting character from user's characters.
+
+    The method gets information about the user and the character associated
+    with him, and then deletes the entry in the database.
+
+    If the service does not find a matching entry, it returns None,
+    after which the method returns a 404 HTTP code.
 
     Parameters
     ----------
@@ -196,6 +202,16 @@ async def delete_character(
     Returns
     -------
     response : StandardResponse
-        In development.
+        Positive feedback about character's data updating.
     """
-    return {"message": "In development."}
+    if not await character_service.delete_user_character(
+        session, user.id, character_id
+    ):
+        await session.rollback()
+
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Character with uuid={character_id} not found.",
+        )
+
+    return {"message": "Character deleted successfully."}
