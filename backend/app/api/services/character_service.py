@@ -130,3 +130,35 @@ async def update_user_character(
         await session.commit()
 
     return result
+
+
+async def delete_user_character(
+    session: AsyncSession, user_id: UUID, character_id: UUID
+) -> UserCharacter:
+    """Character removal function.
+
+    Removes a character entry from the table containing information about the user's characters.
+
+    Parameters
+    ----------
+    session : AsyncSession
+        Request session object.
+    user_id : UUID
+        User's UUID.
+    character_id : UUID
+        Character's UUID.
+
+    Returns
+    -------
+    user_character : UserCharacter or None
+        The entry that was deleted.
+    """
+    user_character: UserCharacter | None = await session.get(
+        UserCharacter, {"user_id": user_id, "character_id": character_id}
+    )
+
+    if user_character:
+        await session.delete(user_character)
+        await session.commit()
+
+    return user_character
