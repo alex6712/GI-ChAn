@@ -11,7 +11,7 @@ from app.api.schemas import FullCharacterSchema, UserCharacterSchema
 from app.api.schemas.responses import FullCharactersResponse, StandardResponse
 from app.api.services import character_service
 from app.database.session import get_session
-from app.database.tables import Character, User
+from app.database.tables.entities import Character, User
 
 router = APIRouter(
     prefix="/characters",

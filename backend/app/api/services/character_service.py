@@ -5,7 +5,8 @@ from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas import UserCharacterSchema
-from app.database.tables import Character, User, UserCharacter
+from app.database.tables.entities import Character, User
+from app.database.tables.junctions import UserCharacter
 
 
 async def get_characters_by_user(user: User) -> List[UserCharacter]:

@@ -1,18 +1,21 @@
 import uuid
-from typing import List
+from typing import List, TYPE_CHECKING
 
-from sqlalchemy import PrimaryKeyConstraint, String, UniqueConstraint, func
+from sqlalchemy import PrimaryKeyConstraint, UniqueConstraint, func
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,
     relationship,
 )
-from sqlalchemy.types import Uuid
+from sqlalchemy.types import String, Uuid
 
-from app.database import tables
+from app.database.tables import Base
+
+if TYPE_CHECKING:  # only processed by mypy
+    from app.database.tables.junctions import UserCharacter
 
 
-class User(tables.Base):
+class User(Base):
     __tablename__ = "user"
 
     __table_args__ = (
@@ -34,7 +37,7 @@ class User(tables.Base):
         String(256), nullable=True, comment="Refresh token for access token."
     )
 
-    characters: Mapped[List["tables.UserCharacter"]] = relationship(
+    characters: Mapped[List["UserCharacter"]] = relationship(
         "UserCharacter", back_populates="user"
     )
 

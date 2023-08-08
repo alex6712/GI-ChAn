@@ -4,7 +4,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.schemas import UserWithPasswordSchema
-from app.database.tables import User
+from app.database.tables.entities import User
 
 
 async def get_user_by_username(session: AsyncSession, username: AnyStr) -> User:

@@ -1,4 +1,5 @@
 import uuid
+from typing import TYPE_CHECKING
 
 from sqlalchemy import ForeignKeyConstraint, PrimaryKeyConstraint
 from sqlalchemy.orm import (
@@ -8,10 +9,13 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.types import Integer, Uuid
 
-from app.database import tables
+from app.database.tables import Base
+
+if TYPE_CHECKING:  # only processed by mypy
+    from app.database.tables.entities import User, Character
 
 
-class UserCharacter(tables.Base):
+class UserCharacter(Base):
     __tablename__ = "user_character"
 
     __table_args__ = (
@@ -44,10 +48,8 @@ class UserCharacter(tables.Base):
     character_skill_level: Mapped[int] = mapped_column(Integer())
     character_burst_level: Mapped[int] = mapped_column(Integer())
 
-    user: Mapped["tables.User"] = relationship("User", back_populates="characters")
-    character: Mapped["tables.Character"] = relationship(
-        "Character", back_populates="users"
-    )
+    user: Mapped["User"] = relationship("User", back_populates="characters")
+    character: Mapped["Character"] = relationship("Character", back_populates="users")
 
     def __repr__(self) -> str:
         return (
