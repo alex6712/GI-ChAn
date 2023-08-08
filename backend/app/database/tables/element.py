@@ -33,6 +33,6 @@ class Element(tables.Base):
         return (
             f"<{self.__class__.__name__}("
             f"id={self.id!r}, "
-            f"title={self.title!r}, "
+            f"title={self.title!r}"
             f")>"
         )

@@ -73,7 +73,7 @@ class Character(tables.Base):
             f"name={self.name!r}, "
             f"legendary={self.legendary!r}, "
             f"weapon_id={self.weapon_id!r}, "
-            f"element_id={self.element_id!r}"
+            f"element_id={self.element_id!r}, "
             f"region_id={self.region_id!r}"
             f")>"
         )

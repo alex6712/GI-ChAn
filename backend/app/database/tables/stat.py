@@ -12,27 +12,29 @@ from sqlalchemy.types import Uuid
 from app.database import tables
 
 
-class Weapon(tables.Base):
-    __tablename__ = "weapon"
+class Stat(tables.Base):
+    __tablename__ = "stat"
 
-    __table_args__ = (
-        PrimaryKeyConstraint("id", name="weapon_pkey"),
+    __table_args_ = (
+        PrimaryKeyConstraint("id", "stat_pkey"),
         {
-            "comment": "Table for weapon types in Genshin Impact.",
+            "comment": "Table for Genshin Impact artifact stats.",
         },
     )
 
     id: Mapped[uuid.UUID] = mapped_column(Uuid(), server_default=func.gen_random_uuid())
-    title: Mapped[str] = mapped_column(String(256))
+    name: Mapped[str] = mapped_column(String(256))
+    icon_url: Mapped[str] = mapped_column(String(256))
 
-    characters: Mapped[List["tables.Character"]] = relationship(
-        "Character", back_populates="weapon"
+    artifacts: Mapped[List["tables.Artifact"]] = relationship(
+        "Artifact", back_populates="main_stat"
     )
 
     def __repr__(self) -> str:
         return (
             f"<{self.__class__.__name__}("
             f"id={self.id!r}, "
-            f"title={self.title!r}"
+            f"name={self.name!r}, "
+            f"icon_url={self.icon_url!r}"
             f")>"
         )
