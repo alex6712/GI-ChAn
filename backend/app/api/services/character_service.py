@@ -1,40 +1,17 @@
 from typing import List
 from uuid import UUID
 
-from sqlalchemy import select
+from sqlalchemy import and_, select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.schemas import CharacterDataSchema, CharacterDataWithIdSchema
-from app.database.tables.entities import Character, User
-from app.database.tables.junctions import UserCharacter
+from app.api.schemas import UserCharacterSchema
+from app.database.tables import Character, User, UserCharacter
 
 
-async def get_user_character_by_id(
-    session: AsyncSession, id_: UUID
-) -> UserCharacter | None:
-    """The function of obtaining data about the user's character.
+async def get_characters_by_user(user: User) -> List[UserCharacter]:
+    """The function of obtaining a complete description of all user's characters.
 
-    It takes UserCharacter's UUID as input and returns a UserCharacter object.
-
-    Parameters
-    ----------
-    session : AsyncSession
-        Request session object.
-    id_ : UUID
-        UserCharacter's UUID.
-
-    Returns
-    -------
-    character : UserCharacter
-        User's character data.
-    """
-    return await session.get(UserCharacter, {"id": id_})
-
-
-async def get_user_characters_by_user(user: User) -> List[UserCharacter]:
-    """The function of obtaining all user's characters' data.
-
-    It accepts the user's object as input, forms a query to the user_character
+    It accepts the user's UUID as input, forms a query to the user_character
     association table and receives information about all the user's characters.
 
     Complements the information by making additional queries on the
@@ -50,18 +27,19 @@ async def get_user_characters_by_user(user: User) -> List[UserCharacter]:
     characters : List[UserCharacter]
         List of user's characters' representations.
     """
-    return await user.awaitable_attrs.characters
+    return [*await user.awaitable_attrs.characters]
 
 
 async def get_character_by_id(session: AsyncSession, id_: UUID) -> Character:
     """Gets general information about the character by its uuid.
 
-    Receives the character's ``id_`` as input and makes a request
+    Receives the character's ``uuid_`` as input and makes a request
     for general information about him.
 
     The attributes of ``weapon``, ``element`` and ``region``
-    are stored in the database as foreign keys, so this attributes **must**
-    be called with ``await character.awaitable_attrs.{attr}`` syntax.
+    are stored in the database as foreign keys, so with the
+    help of additional queries, we get their textual representation
+    and form a response.
 
     Parameters
     ----------
@@ -79,7 +57,7 @@ async def get_character_by_id(session: AsyncSession, id_: UUID) -> Character:
 
 
 async def add_character_to_user(
-    session: AsyncSession, user_id: UUID, data: CharacterDataWithIdSchema
+    session: AsyncSession, user_id: UUID, data: UserCharacterSchema
 ):
     """Adds a character entry.
 
@@ -95,44 +73,68 @@ async def add_character_to_user(
         Request session object.
     user_id : UUID
         User's UUID.
-    data : CharacterDataWithIdSchema
+    data : UserCharacterSchema
         Character's info to add.
     """
     session.add(
         UserCharacter(
             user_id=user_id,
-            **data.model_dump(),
+            **{"character_" + key: value for key, value in data.model_dump().items()},
         )
     )
     await session.commit()
 
 
 async def update_user_character(
-    session: AsyncSession, user_character: UserCharacter, data: CharacterDataSchema
-):
+    session: AsyncSession, user_id: UUID, data: UserCharacterSchema
+) -> UUID:
     """Updating a character entry.
 
     The function updates the record in the database about
     the character associated with the user.
 
+    If the UPDATE request returns None, no commit occurs.
+
     Parameters
     ----------
     session : AsyncSession
         Request session object.
-    user_character : UserCharacter
-        UserCharacter's ORM to update.
-    data : CharacterDataSchema
-        Character's info to put.
+    user_id : UUID
+        User's UUID.
+    data : UserCharacterSchema
+        Character's info to add.
+
+    Returns
+    -------
+    result : UUID or None
+        Result of the UPDATE request with returning ``user_id`` parameter.
     """
-    character_data = data.model_dump()
+    result = await session.scalar(
+        update(UserCharacter)
+        .where(
+            and_(
+                UserCharacter.user_id == user_id, UserCharacter.character_id == data.id
+            )
+        )
+        .values(
+            character_level=data.level,
+            character_constellations=data.constellations,
+            character_attack_level=data.attack_level,
+            character_skill_level=data.skill_level,
+            character_burst_level=data.burst_level,
+        )
+        .returning(UserCharacter.user_id)
+    )
 
-    for key in character_data:
-        setattr(user_character, key, character_data.get(key))
+    if result:
+        await session.commit()
 
-    await session.commit()
+    return result
 
 
-async def delete_user_character(session: AsyncSession, user_character: UserCharacter):
+async def delete_user_character(
+    session: AsyncSession, user_id: UUID, character_id: UUID
+) -> UserCharacter:
     """Character removal function.
 
     Removes a character entry from the table containing information about the user's characters.
@@ -141,8 +143,22 @@ async def delete_user_character(session: AsyncSession, user_character: UserChara
     ----------
     session : AsyncSession
         Request session object.
-    user_character : UserCharacter
-        UserCharacter's ORM to delete.
+    user_id : UUID
+        User's UUID.
+    character_id : UUID
+        Character's UUID.
+
+    Returns
+    -------
+    user_character : UserCharacter or None
+        The entry that was deleted.
     """
-    await session.delete(user_character)
-    await session.commit()
+    user_character: UserCharacter | None = await session.get(
+        UserCharacter, {"user_id": user_id, "character_id": character_id}
+    )
+
+    if user_character:
+        await session.delete(user_character)
+        await session.commit()
+
+    return user_character

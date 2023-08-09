@@ -13,7 +13,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.api.jwt import jwt_decode
 from app.api.services import user_service
 from app.database.session import get_session
-from app.database.tables.entities import User
+from app.database.tables import User
 
 oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign_in")
 

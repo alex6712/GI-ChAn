@@ -2,22 +2,16 @@ import re
 from typing import Annotated
 from uuid import UUID
 
-from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
+from fastapi import APIRouter, Body, Depends, HTTPException, Query, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.api.dependencies import validate_access_token
-from app.api.schemas import (
-    CharacterDataSchema,
-    CharacterDataWithIdSchema,
-    FullCharacterSchema,
-    UserCharacterSchema,
-)
+from app.api.schemas import FullCharacterSchema, UserCharacterSchema
 from app.api.schemas.responses import FullCharactersResponse, StandardResponse
 from app.api.services import character_service
 from app.database.session import get_session
-from app.database.tables.entities import Character, User
-from app.database.tables.junctions import UserCharacter
+from app.database.tables import Character, User
 
 router = APIRouter(
     prefix="/characters",
@@ -53,7 +47,7 @@ async def get_characters(user: Annotated[User, Depends(validate_access_token)]):
     """
     characters = []
 
-    for user_character in await character_service.get_user_characters_by_user(user):
+    for user_character in await character_service.get_characters_by_user(user):
         # get character's ORM
         character: Character = await user_character.awaitable_attrs.character
 
@@ -81,7 +75,7 @@ async def get_characters(user: Annotated[User, Depends(validate_access_token)]):
     summary="Append character to user's characters.",
 )
 async def append_character(
-    character_data: Annotated[CharacterDataWithIdSchema, Body()],
+    character: Annotated[UserCharacterSchema, Body()],
     user: Annotated[User, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
@@ -89,7 +83,7 @@ async def append_character(
 
     Parameters
     ----------
-    character_data : CharacterDataWithIdSchema
+    character : UserCharacterSchema
         Character's data to append.
     user : User
         The user is received from dependence on authorization.
@@ -102,7 +96,7 @@ async def append_character(
         Positive feedback about character's attaching.
     """
     try:
-        await character_service.add_character_to_user(session, user.id, character_data)
+        await character_service.add_character_to_user(session, user.id, character)
     except IntegrityError as integrity_error:
         await session.rollback()
 
@@ -114,14 +108,13 @@ async def append_character(
             case "UniqueViolationError":
                 raise HTTPException(
                     status_code=status.HTTP_409_CONFLICT,
-                    detail=f"Character with uuid={character_data.character_id} "
-                    "already attached to the user.",
+                    detail=f"Character with uuid={character.id} already attached to the user.",
                 )
             case "ForeignKeyViolationError":
                 # if a user isn't found, then 401 Error is raised by ``validate_access_token``
                 raise HTTPException(
                     status_code=status.HTTP_404_NOT_FOUND,
-                    detail=f"Character with uuid={character_data.character_id} not found.",
+                    detail=f"Character with uuid={character.id} not found.",
                 )
             case _:
                 raise HTTPException(
@@ -133,16 +126,13 @@ async def append_character(
 
 
 @router.put(
-    "/put/{user_character_id}",
+    "/put",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
     summary="Update character's data.",
 )
 async def put_character(
-    user_character_id: Annotated[
-        UUID, Path(description="The UUID of the user character to update.")
-    ],
-    character_data: Annotated[CharacterDataSchema, Body()],
+    character: Annotated[UserCharacterSchema, Body()],
     user: Annotated[User, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
 ):
@@ -156,9 +146,7 @@ async def put_character(
 
     Parameters
     ----------
-    user_character_id : UUID
-        The UUID of the user character to update.
-    character_data : CharacterDataSchema
+    character : UserCharacterSchema
         Character's data to update.
     user : User
         The user is received from dependence on authorization.
@@ -170,26 +158,26 @@ async def put_character(
     response : StandardResponse
         Positive feedback about character's data updating.
     """
-    user_character: UserCharacter = await _get_user_character(
-        session, user, user_character_id
-    )
+    if not await character_service.update_user_character(session, user.id, character):
+        await session.rollback()
 
-    await character_service.update_user_character(
-        session, user_character, character_data
-    )
+        raise HTTPException(
+            status_code=status.HTTP_404_NOT_FOUND,
+            detail=f"Character with uuid={character.id} not found.",
+        )
 
     return {"message": "Data updated successfully."}
 
 
 @router.delete(
-    "/delete/{user_character_id}",
+    "/delete",
     response_model=StandardResponse,
     status_code=status.HTTP_200_OK,
     summary="Deleting character.",
 )
 async def delete_character(
-    user_character_id: Annotated[
-        UUID, Path(description="The UUID of the user character to delete.")
+    character_id: Annotated[
+        UUID, Query(description="The UUID of the character to delete.")
     ],
     user: Annotated[User, Depends(validate_access_token)],
     session: Annotated[AsyncSession, Depends(get_session)],
@@ -199,10 +187,13 @@ async def delete_character(
     The method gets information about the user and the character associated
     with him, and then deletes the entry in the database.
 
+    If the service does not find a matching entry, it returns None,
+    after which the method returns a 404 HTTP code.
+
     Parameters
     ----------
-    user_character_id : UUID
-        The UUID of the user_character to delete.
+    character_id : UUID
+        The UUID of the character to delete.
     user : User
         The user is received from dependence on authorization.
     session : AsyncSession
@@ -213,52 +204,14 @@ async def delete_character(
     response : StandardResponse
         Positive feedback about character's data updating.
     """
-    await character_service.delete_user_character(
-        session, await _get_user_character(session, user, user_character_id)
-    )
+    if not await character_service.delete_user_character(
+        session, user.id, character_id
+    ):
+        await session.rollback()
 
-    return {"message": "User character deleted successfully."}
-
-
-async def _get_user_character(
-    session: AsyncSession, user: User, id_: UUID
-) -> UserCharacter:
-    """A function to get and validate a UserCharacter object.
-
-    Receives the user object and the uuid of the user character
-    record as input, checks for the presence in the database and
-    for the correspondence of the record and the user.
-
-    Returns user_character entry.
-
-    Parameters
-    ----------
-    session : AsyncSession
-        Request session object.
-    user : User
-        The user performing action.
-    id_ : UUID
-        The UUID of the user_character entry being acted upon.
-
-    Returns
-    -------
-    user_character: UserCharacter
-        UserCharacter's ORM.
-    """
-    user_character: UserCharacter | None = (
-        await character_service.get_user_character_by_id(session, id_)
-    )
-
-    if not user_character:
         raise HTTPException(
             status_code=status.HTTP_404_NOT_FOUND,
-            detail=f"User character with uuid={id_} not found.",
+            detail=f"Character with uuid={character_id} not found.",
         )
 
-    if user_character.user_id != user.id:
-        raise HTTPException(
-            status_code=status.HTTP_403_FORBIDDEN,
-            detail="Your uuid and the uuid on the user character entry do not match.",
-        )
-
-    return user_character
+    return {"message": "Character deleted successfully."}

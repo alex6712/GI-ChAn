@@ -40,13 +40,15 @@ class CharacterSchema(BaseModel):
     region: str = Field(example="Мондштадт")
 
 
-class CharacterDataSchema(BaseModel):
-    """Scheme of the character's data object.
+class UserCharacterSchema(BaseModel):
+    """Scheme of the user_character object.
 
     Used to represent specific user's character information.
 
     Attributes
     ----------
+    id : UUID
+        Character's UUID.
     level : int
         Character's level (1-90).
     constellations : int
@@ -59,7 +61,12 @@ class CharacterDataSchema(BaseModel):
         Character's elemental burst level (1-10).
     """
 
-    level: int = Field(example=90)
+    model_config = ConfigDict(from_attributes=True)
+
+    id: UUID = Field(
+        validation_alias="character_id", example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21"
+    )
+    level: int = Field(validation_alias="character_level", example=90)
 
     @classmethod
     @field_validator("level", mode="before")
@@ -69,7 +76,7 @@ class CharacterDataSchema(BaseModel):
 
         raise ValueError(value)
 
-    constellations: int = Field(example=3)
+    constellations: int = Field(validation_alias="character_constellations", example=3)
 
     @classmethod
     @field_validator("constellations", mode="before")
@@ -79,9 +86,9 @@ class CharacterDataSchema(BaseModel):
 
         raise ValueError(value)
 
-    attack_level: int = Field(example=1)
-    skill_level: int = Field(example=6)
-    burst_level: int = Field(example=6)
+    attack_level: int = Field(validation_alias="character_attack_level", example=1)
+    skill_level: int = Field(validation_alias="character_skill_level", example=6)
+    burst_level: int = Field(validation_alias="character_burst_level", example=6)
 
     @classmethod
     @field_validator("attack_level", "skill_level", "burst_level", mode="before")
@@ -90,51 +97,6 @@ class CharacterDataSchema(BaseModel):
             return value
 
         raise ValueError(value)
-
-
-class CharacterDataWithIdSchema(CharacterDataSchema):
-    """Scheme of the character's data object.
-
-    Used to represent specific user's character information with its uuid.
-
-    Attributes
-    ----------
-    character_id : UUID
-        Character's UUID.
-    level : int
-        Character's level (1-90).
-    constellations : int
-        The number of character's constellations (1-6).
-    attack_level : int
-        Character's attack level (1-10).
-    skill_level : int
-        Character's elemental skill level (1-10).
-    burst_level : int
-        Character's elemental burst level (1-10).
-    """
-
-    character_id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
-
-
-class UserCharacterSchema(CharacterDataWithIdSchema):
-    """Scheme of the user_character object.
-
-    Used to represent specific user's character information.
-
-    Attributes
-    ----------
-    id : UUID
-        UserCharacter's UUID.
-    user_id : UUID
-        User's UUID.
-    character_id : UUID
-        Character's UUID.
-    """
-
-    model_config = ConfigDict(from_attributes=True)
-
-    id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
-    user_id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
 
 
 class FullCharacterSchema(CharacterSchema, UserCharacterSchema):
@@ -146,4 +108,26 @@ class FullCharacterSchema(CharacterSchema, UserCharacterSchema):
     --------
     CharacterSchema
     UserCharacterSchema
+
+    Attributes
+    ----------
+    id : UUID
+        Character's UUID.
+    level : int
+        Character's level (1-90).
+    constellations : int
+        The number of character's constellations (1-6).
+    attack_level : int
+        Character's attack level (1-10).
+    skill_level : int
+        Character's elemental skill level (1-10).
+    burst_level : int
+        Character's elemental burst level (1-10).
     """
+
+    id: UUID = Field(example="7a0fac1b-0ff6-46ab-906b-a4eb173bce21")
+    level: int = Field(example=90)
+    constellations: int = Field(example=3)
+    attack_level: int = Field(example=1)
+    skill_level: int = Field(example=6)
+    burst_level: int = Field(example=6)

@@ -9,7 +9,7 @@ from app.api.dependencies import validate_access_token
 from app.api.schemas.responses import UserResponse
 from app.api.services import user_service
 from app.database.session import get_session
-from app.database.tables.entities import User
+from app.database.tables import User
 
 router = APIRouter(
     prefix="/users",
