@@ -9,28 +9,28 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.types import Float, Uuid
 
-from app.database.tables.base import Base
+from app.database.tables import Base
 
 if TYPE_CHECKING:  # only processed by mypy
-    from database.tables.entities import Artifact, Stat
+    from app.database.tables.entities import Artifact, Stat
 
 
 class ArtifactSubStat(Base):
     __tablename__ = "artifact_sub_stat"
 
     __table_args__ = (
-        PrimaryKeyConstraint("artifact_id", "sub_stat_id", name="artifact_stat_pk"),
+        PrimaryKeyConstraint("artifact_id", "sub_stat_id", name="artifact_sub_stat_pk"),
         ForeignKeyConstraint(
             ["artifact_id"],
             ["artifact.id"],
-            name="artifact_stat_artifact_id_fk",
+            name="artifact_sub_stat_artifact_id_fk",
             onupdate="CASCADE",
             ondelete="CASCADE",
         ),
         ForeignKeyConstraint(
             ["sub_stat_id"],
             ["stat.id"],
-            name="artifact_stat_stat_id_fk",
+            name="artifact_sub_stat_sub_stat_id_fk",
             onupdate="CASCADE",
             ondelete="CASCADE",
         ),

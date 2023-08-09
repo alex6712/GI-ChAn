@@ -9,7 +9,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.types import Boolean, String, Uuid
 
-from app.database.tables.base import Base
+from app.database.tables import Base
 
 if TYPE_CHECKING:  # only processed by mypy
     from app.database.tables.junctions import UserCharacter

@@ -12,7 +12,7 @@ from sqlalchemy.types import Float, String, Text, Uuid
 from app.database.tables import Base
 
 if TYPE_CHECKING:  # only processed by mypy
-    from app.database.tables.junctions import ArtifactSubStat
+    from app.database.tables.junctions import ArtifactSubStat, UserCharacter
 
 
 class Artifact(Base):
@@ -25,12 +25,19 @@ class Artifact(Base):
             ["set.id"],
             name="artifact_set_id_fk",
             onupdate="CASCADE",
-            ondelete="SET NULL",
+            ondelete="CASCADE",
         ),
         ForeignKeyConstraint(
             ["main_stat_id"],
             ["stat.id"],
             name="artifact_main_stat_id_fk",
+            onupdate="CASCADE",
+            ondelete="CASCADE",
+        ),
+        ForeignKeyConstraint(
+            ["user_character_id"],
+            ["user_character.id"],
+            name="artifact_user_character_id_fk",
             onupdate="CASCADE",
             ondelete="SET NULL",
         ),
@@ -43,11 +50,17 @@ class Artifact(Base):
     set_id: Mapped[uuid.UUID] = mapped_column(Uuid())
     main_stat_id: Mapped[uuid.UUID] = mapped_column(Uuid())
     main_stat_value: Mapped[float] = mapped_column(Float())
+    user_character_id: Mapped[uuid.UUID] = mapped_column(Uuid(), nullable=True)
 
     set: Mapped["Set"] = relationship("Set", back_populates="artifacts")
-    main_stat: Mapped["Stat"] = relationship("Stat", back_populates="artifacts")
+    main_stat: Mapped["Stat"] = relationship(
+        "Stat", back_populates="main_stat_artifacts"
+    )
     stats: Mapped["ArtifactSubStat"] = relationship(
-        "ArtifactStat", back_populates="artifact"
+        "ArtifactSubStat", back_populates="artifact"
+    )
+    character: Mapped["UserCharacter"] = relationship(
+        "UserCharacter", back_populates="artifacts"
     )
 
     def __repr__(self) -> str:
@@ -105,7 +118,7 @@ class Stat(Base):
         "Artifact", back_populates="main_stat"
     )
     sub_stat_artifacts: Mapped[List["ArtifactSubStat"]] = relationship(
-        "Artifact", back_populates="sub_stat"
+        "ArtifactSubStat", back_populates="sub_stat"
     )
 
     def __repr__(self) -> str:
