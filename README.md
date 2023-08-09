@@ -8,6 +8,9 @@
     <p>
         <b>Characters analyzer and automatic builds generator for Genshin Impact.</b>
     </p>
+    <a href="https://github.com/alex6712/GI-ChAn/actions/workflows/backend-test.yml">
+        <img src="https://github.com/alex6712/GI-ChAn/workflows/backend-test/badge.svg?event=push&branch=master" alt="backend-test">
+    </a>
     <img alt="GitHub Last Commit" src="https://img.shields.io/github/last-commit/alex6712/GI-ChAn?logo=GitHub">
     <img alt="GitHub Code Size" src="https://img.shields.io/github/languages/code-size/alex6712/GI-ChAn?logo=GitHub">
     <a href="https://github.com/psf/black">
