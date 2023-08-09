@@ -14,6 +14,7 @@ The dependency manager for this project is pypoetry.
 To install dependencies, you need to [install pypoetry](https://python-poetry.org/docs#installation)
 
 Then, you can configure pypoetry following [the official guide](https://python-poetry.org/docs/basic-usage/):
+
 ```shell
 poetry config virtualenvs.in-project true
 poetry init
