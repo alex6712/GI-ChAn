@@ -11,7 +11,7 @@ on:
       - synchronize
 
 jobs:
-  test:
+  backend-test:
     runs-on: ubuntu-latest
     steps:
       - name: Testing
