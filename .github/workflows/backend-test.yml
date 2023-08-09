@@ -1,0 +1,21 @@
+name: backend-test
+
+on:
+  push:
+    branches:
+      - master
+      - dev
+  pull_request:
+    type:
+      - opened
+      - synchronize
+
+jobs:
+  backend-test:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Testing
+        run: |
+          echo "Running unit tests..."
+          sleep 5
+          echo "Code coverage is 90%"

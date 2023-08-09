@@ -2,8 +2,8 @@
 name = "backend"
 version = "0.2.0"
 description = "Web-application for Genshin Impact characters' bulds analyze."
-authors = ["alex6712 <alexeivanyukov@yandex.ru>"]
-license = "MIT License"
+authors = ["alex6712 <vanyukov.alex@gmail.com>"]
+license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
@@ -20,6 +20,9 @@ passlib = { extras = ["bcrypt"], version = "^1.7.4" }
 python-jose = { extras = ["cryptography"], version = "^3.1.0" }
 phonenumbers = "^8.13.18"
 
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+flake8 = "^6.1.0"
 
 [build-system]
 requires = ["poetry-core"]

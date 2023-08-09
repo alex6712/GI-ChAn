@@ -1,7 +1,12 @@
 import uuid
 from typing import List, TYPE_CHECKING
 
-from sqlalchemy import (ForeignKeyConstraint, PrimaryKeyConstraint, UniqueConstraint, func)
+from sqlalchemy import (
+    ForeignKeyConstraint,
+    PrimaryKeyConstraint,
+    UniqueConstraint,
+    func,
+)
 from sqlalchemy.orm import (
     Mapped,
     mapped_column,

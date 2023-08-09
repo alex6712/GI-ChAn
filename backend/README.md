@@ -17,7 +17,6 @@ Then, you can configure pypoetry following [the official guide](https://python-p
 
 ```shell
 poetry config virtualenvs.in-project true
-poetry init
 poetry install
 ```
 

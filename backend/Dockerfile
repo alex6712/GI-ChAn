@@ -1,17 +1,27 @@
 # Dockerfile
 
-# official python image
+FROM python:3.11 as requirements-stage
+
+WORKDIR /tmp
+
+RUN pip install poetry
+
+COPY ./pyproject.toml ./poetry.lock* /tmp/
+
+# exporting pypoetry dependencies as requirements.txt
+RUN poetry export -f requirements.txt --output requirements.txt --without-hashes
+
 FROM python:3.11
 
 # set work directory
-WORKDIR /backend-image
+WORKDIR /code
 
 # install dependencies
-COPY ./requirements.txt /backend-image
-RUN pip install --no-cache-dir --upgrade -r /backend-image/requirements.txt
+COPY --from=requirements-stage /tmp/requirements.txt /code/requirements.txt
+RUN pip install --no-cache-dir --upgrade -r /code/requirements.txt
 
 # copy source root
-COPY . /backend-image
+COPY ./app /code/app
 
 # starting
-RUN python /backend-image/start.py
+CMD ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "80"]
