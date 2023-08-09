@@ -16,6 +16,6 @@ jobs:
     steps:
       - name: Testing
         run: |
-          - echo "Running unit tests..."
-          - sleep 5
-          - echo "Code coverage is 90%"
+          echo "Running unit tests..."
+          sleep 5
+          echo "Code coverage is 90%"
