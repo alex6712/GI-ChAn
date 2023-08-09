@@ -13,7 +13,7 @@ from app.api.schemas.responses import StandardResponse, TokenResponse
 from app.api.security import hash_, verify
 from app.api.services import user_service
 from app.database.session import get_session
-from app.database.tables import User
+from app.database.tables.entities import User
 
 router = APIRouter(
     prefix="/auth",

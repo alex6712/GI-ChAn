@@ -1,0 +1,26 @@
+[tool.poetry]
+name = "backend"
+version = "0.2.0"
+description = "Web-application for Genshin Impact characters' bulds analyze."
+authors = ["alex6712 <alexeivanyukov@yandex.ru>"]
+license = "MIT License"
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+uvicorn = "^0.23.2"
+fastapi = "^0.101.0"
+python-multipart = "0.0.6"
+email-validator = "^2.0.0.post2"
+pydantic-settings = "^2.0.2"
+pydantic-extra-types = "^2.0.0"
+SQLAlchemy = "^2.0.19"
+asyncpg = "^0.28.0"
+passlib = { extras = ["bcrypt"], version = "^1.7.4" }
+python-jose = { extras = ["cryptography"], version = "^3.1.0" }
+phonenumbers = "^8.13.18"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

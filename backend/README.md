@@ -8,13 +8,17 @@ The server part of the application, which is responsible for the game logic and 
 
 The server part is downloaded automatically when the repository is cloned.
 
-However, to run it, you will need libraries, the list of which is attached as a `requirements.txt` file.
+However, to run it, you need to install some libraries.
 
-Use the following command to install them:
+The dependency manager for this project is pypoetry.
+To install dependencies, you need to [install pypoetry](https://python-poetry.org/docs#installation)
 
-```pycon
-cd backend
-pip install -r requirements.txt
+Then, you can configure pypoetry following [the official guide](https://python-poetry.org/docs/basic-usage/):
+
+```shell
+poetry config virtualenvs.in-project true
+poetry init
+poetry install
 ```
 
 ## Run
@@ -23,16 +27,8 @@ The backend is written using the FastAPI framework. The application is launched 
 
 Use this command to start the server side of the application:
 
-```pycon
-cd backend
-python start.py
-```
-
-Also, a less preferred launch version (because the settings are read from the CLI, and not from .env):
-
-```pycon
-cd backend
-python -m uvicorn app.main:characters_analyzer --reload --host <host> --port 8080
+```shell
+poetry run python start.py
 ```
 
 ***
@@ -43,9 +39,8 @@ python -m uvicorn app.main:characters_analyzer --reload --host <host> --port 808
 
 The project code is covered by documentation, which can be viewed by running:
 
-```pycon
-cd backend
-python -m pydoc <name>
+```shell
+python -m pydoc {name}
 ```
 
 Where `name` is the name of a module, package, function, class, etc.
