@@ -50,11 +50,14 @@ jobs:
       #--------------------------------------------------------------
       - name: Install dependencies
         if: steps.cached-poetry-dependencies.outputs.cache-hit != 'true'
-        run: poetry install --no-interaction --no-root
+        run: |
+          cd backend
+          poetry install --no-interaction --no-root
 
       #--------------------------------
       #  -----  run test suite  -----
       #--------------------------------
       - name: Run tests
         run: |
-          poetry run pytest tests/
+          cd backend
+          poetry run pytest app/tests/
