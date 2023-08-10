@@ -1,6 +1,7 @@
 # !- BACKEND -! #
 
 # Python virtual environment #
+/poetry.lock
 .venv/
 
 # PyCharm project info #

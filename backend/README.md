@@ -11,13 +11,13 @@ The server part is downloaded automatically when the repository is cloned.
 However, to run it, you need to install some libraries.
 
 The dependency manager for this project is pypoetry.
-To install dependencies, you need to [install pypoetry](https://python-poetry.org/docs#installation)
+To install dependencies, you need to [install pypoetry](https://python-poetry.org/docs#installation).
 
 Then, you can configure pypoetry following [the official guide](https://python-poetry.org/docs/basic-usage/):
 
 ```shell
 poetry config virtualenvs.in-project true
-poetry install
+poetry install --without dev
 ```
 
 ## Run
@@ -48,6 +48,6 @@ Where `name` is the name of a module, package, function, class, etc.
 
 Also, using the capabilities built into FastAPI, the API documentation was generated, available at the link:
 
-* **Swagger OpenAPI:** `http://<host>:8080/docs`;
+* **Swagger OpenAPI:** `http://{host}:8080/docs`;
 
-* **ReDoc:** `http://<host>:8080/redoc`.
+* **ReDoc:** `http://{host}:8080/redoc`.
