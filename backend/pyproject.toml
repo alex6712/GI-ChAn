@@ -23,6 +23,10 @@ phonenumbers = "^8.13.18"
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
 flake8 = "^6.1.0"
+pytest = "^7.4.0"
+httpx = "^0.24.1"
+trio = "^0.22.2"
+bump-pydantic = "^0.6.1"
 
 [build-system]
 requires = ["poetry-core"]
