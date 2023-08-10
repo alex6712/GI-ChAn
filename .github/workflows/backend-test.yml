@@ -57,7 +57,7 @@ jobs:
       - name: Run API
         run: |
           cd backend
-          poetry run start.py
+          poetry run python start.py
 
       #--------------------------------
       #  -----  run test suite  -----
