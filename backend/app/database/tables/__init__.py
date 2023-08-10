@@ -3,5 +3,4 @@
 A package with descriptions of database tables.
 """
 
-from . import entities, junctions
-from .base import Base
+from app.database.tables import entities, junctions

@@ -14,7 +14,7 @@ from sqlalchemy.orm import (
 )
 from sqlalchemy.types import Integer, Uuid
 
-from app.database.tables import Base
+from app.database.tables.base import Base
 
 if TYPE_CHECKING:  # only processed by mypy
     from app.database.tables.entities import User, Character, Artifact

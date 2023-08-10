@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import (
 
 from app import get_settings
 from app.config import Settings
-from app.database.tables import Base
+from app.database.tables.base import Base
 
 
 async def initialize():

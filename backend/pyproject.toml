@@ -1,5 +1,5 @@
 [tool.poetry]
-name = "backend"
+name = "GI-ChAn"
 version = "0.2.0"
 description = "Web-application for Genshin Impact characters' bulds analyze."
 authors = ["alex6712 <vanyukov.alex@gmail.com>"]
