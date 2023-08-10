@@ -12,9 +12,5 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# API test scripts #
-test/
-*.http
-
 # .env #
 .env

@@ -2,7 +2,7 @@ from functools import lru_cache
 from typing import List
 
 from pydantic import AnyHttpUrl, EmailStr, IPvAnyAddress, field_validator
-from pydantic_settings import BaseSettings
+from pydantic_settings import SettingsConfigDict, BaseSettings
 
 
 class Settings(BaseSettings):
@@ -105,9 +105,7 @@ class Settings(BaseSettings):
     ACCESS_TOKEN_LIFETIME_MINUTES: int
     REFRESH_TOKEN_LIFETIME_DAYS: int
 
-    class Config:
-        env_file = ".env"
-        case_sensitive = True
+    model_config = SettingsConfigDict(env_file=".env", case_sensitive=True)
 
 
 @lru_cache
