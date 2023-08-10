@@ -54,6 +54,11 @@ jobs:
           cd backend
           poetry install --no-interaction --no-root
 
+      - name: Run API
+        run: |
+          cd backend
+          poetry run start.py
+
       #--------------------------------
       #  -----  run test suite  -----
       #--------------------------------
