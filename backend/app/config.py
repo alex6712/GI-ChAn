@@ -50,6 +50,8 @@ class Settings(BaseSettings):
         User password to connect to the database.
     DATABASE_PORT : int
         Database port.
+    CURRENT_API_URL : int
+        Current API version URL.
     DATABASE_NAME : str
         Database name.
     DATABASE_URL : PostgresDsn
@@ -92,6 +94,8 @@ class Settings(BaseSettings):
     DOMAIN: str | IPvAnyAddress
 
     BACKEND_PORT: int
+
+    CURRENT_API_URL: str
 
     DATABASE_USER: str
     DATABASE_PASSWORD: str

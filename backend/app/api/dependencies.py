@@ -10,12 +10,15 @@ from jose import ExpiredSignatureError, JWTError
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
+from app import get_settings
 from app.api.jwt import jwt_decode
 from app.api.services import user_service
 from app.database.session import get_session
 from app.database.tables.entities import User
 
-oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/v1/auth/sign_in")
+oauth2_scheme = OAuth2PasswordBearer(
+    tokenUrl=f"/{get_settings().CURRENT_API_URL}/auth/sign_in"
+)
 
 credentials_exception = HTTPException(
     status_code=status.HTTP_401_UNAUTHORIZED,
