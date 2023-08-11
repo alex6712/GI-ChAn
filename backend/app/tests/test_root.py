@@ -7,7 +7,7 @@ from app.main import characters_analyzer
 
 settings: Settings = get_settings()
 
-api_url = f"http://{settings.DOMAIN}:{settings.BACKEND_PORT}/api/v1"
+api_url = f"http://{settings.DOMAIN}:{settings.BACKEND_PORT}/{settings.CURRENT_API_URL}"
 
 
 @pytest.mark.anyio
