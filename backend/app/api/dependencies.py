@@ -8,13 +8,41 @@ from fastapi.security import (
 )
 from jose import ExpiredSignatureError, JWTError
 from sqlalchemy.exc import IntegrityError
-from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy.ext.asyncio import (
+    AsyncEngine,
+    AsyncSession,
+    async_sessionmaker,
+    create_async_engine,
+)
 
 from app import get_settings
 from app.api.jwt import jwt_decode
 from app.api.services import user_service
-from app.database.session import get_session
 from app.database.tables.entities import User
+
+engine: AsyncEngine = create_async_engine(
+    url=get_settings().DATABASE_URL,
+    echo=False,
+    pool_pre_ping=True,
+)
+AsyncSessionMaker: async_sessionmaker = async_sessionmaker(
+    bind=engine, class_=AsyncSession, expire_on_commit=False
+)
+
+
+async def get_session() -> AsyncSession:
+    """Creates a unique request asynchronous session object.
+
+    Used to add a database session to the request route using the FastAPI dependency system.
+
+    Returns
+    -------
+    session : AsyncSession
+        The asynchronous session object for the unique request.
+    """
+    async with AsyncSessionMaker() as session:
+        yield session
+
 
 oauth2_scheme = OAuth2PasswordBearer(
     tokenUrl=f"/{get_settings().CURRENT_API_URL}/auth/sign_in"
