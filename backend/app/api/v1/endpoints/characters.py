@@ -6,7 +6,7 @@ from fastapi import APIRouter, Body, Depends, HTTPException, Path, status
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import validate_access_token
+from app.api.dependencies import validate_access_token, get_session
 from app.api.schemas import (
     CharacterDataSchema,
     CharacterDataWithIdSchema,
@@ -15,7 +15,6 @@ from app.api.schemas import (
 )
 from app.api.schemas.responses import FullCharactersResponse, StandardResponse
 from app.api.services import character_service
-from app.database.session import get_session
 from app.database.tables.entities import Character, User
 from app.database.tables.junctions import UserCharacter
 

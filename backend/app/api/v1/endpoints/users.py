@@ -5,10 +5,9 @@ from fastapi.exceptions import HTTPException
 from fastapi.responses import RedirectResponse
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import validate_access_token
+from app.api.dependencies import validate_access_token, get_session
 from app.api.schemas.responses import UserResponse
 from app.api.services import user_service
-from app.database.session import get_session
 from app.database.tables.entities import User
 
 router = APIRouter(

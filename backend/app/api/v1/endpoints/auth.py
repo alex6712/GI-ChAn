@@ -6,13 +6,12 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlalchemy.exc import IntegrityError
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.api.dependencies import validate_refresh_token
+from app.api.dependencies import validate_refresh_token, get_session
 from app.api.jwt import create_jwt_pair
 from app.api.schemas import UserWithPasswordSchema
 from app.api.schemas.responses import StandardResponse, TokenResponse
 from app.api.security import hash_, verify
 from app.api.services import user_service
-from app.database.session import get_session
 from app.database.tables.entities import User
 
 router = APIRouter(
