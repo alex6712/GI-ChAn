@@ -1,7 +1,7 @@
 [tool.poetry]
 name = "GI-ChAn"
-version = "0.2.0"
-description = "Web-application for Genshin Impact characters' bulds analyze."
+version = "0.2.1"
+description = "Web-application for Genshin Impact characters' builds analyze."
 authors = ["alex6712 <vanyukov.alex@gmail.com>"]
 license = "MIT"
 readme = "README.md"
@@ -9,7 +9,7 @@ readme = "README.md"
 [tool.poetry.dependencies]
 python = "^3.11"
 uvicorn = "^0.23.2"
-fastapi = "^0.101.0"
+fastapi = "^0.103.0"
 python-multipart = "0.0.6"
 email-validator = "^2.0.0.post2"
 pydantic-settings = "^2.0.2"
@@ -26,7 +26,6 @@ flake8 = "^6.1.0"
 pytest = "^7.4.0"
 httpx = "^0.24.1"
 trio = "^0.22.2"
-bump-pydantic = "^0.6.1"
 
 [build-system]
 requires = ["poetry-core"]
